@@ -5,8 +5,6 @@ from .training.classification_pipeline import train_and_test_classification_mode
 from .utils import seed_everything
 import torch
 
-# Add this to your main training script for debugging
-
 
 def main(study_name, custom_hyperparams_dict=None, custom_trainer_params_dict=None):
     """

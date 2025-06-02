@@ -9,11 +9,6 @@ def main(study_name, custom_hyperparams_dict=None, custom_trainer_params_dict=No
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     print(f"\n>>> Running Link Prediction Experiment for Study: {study_name} <<<")
-    
-    # These would typically come from a config file or more complex arg parsing
-    # For now, using defaults from config.py and allowing overrides
-    # Note: run_rgcn_experiment already has its own default loading from config
-    # So, custom_hyperparams_dict and custom_trainer_params_dict are for overriding those defaults
 
     run_rgcn_experiment(
         STUDY_NAME=study_name,

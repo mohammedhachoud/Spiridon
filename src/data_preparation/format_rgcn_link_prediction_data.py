@@ -8,7 +8,6 @@ import torch
 from sklearn.decomposition import PCA
 import gc
 from collections import Counter, defaultdict
-# from sentence_transformers import SentenceTransformer # Import inside the function
 
 from .. import config
 from ..graph_utils import (
@@ -560,8 +559,8 @@ def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
             "bert_nodes_failed_or_missing_text": num_bert_failed,
             "nodes_in_final_matrix_with_embedding": nodes_receiving_final_embedding,
             "total_relations": len(relation_to_idx),
-            "total_training_triplets_for_gnn": len(training_triplets_final), # Renamed for clarity
-            "total_evaluation_triplets_for_btc_task": len(evaluation_triplets_final), # Renamed for clarity
+            "total_training_triplets_for_gnn": len(training_triplets_final), 
+            "total_evaluation_triplets_for_btc_task": len(evaluation_triplets_final), 
              "cat_to_root_map_original_ids": {str(k): str(v) for k,v in cat_to_root_map_original_ids.items()},
         }
     }

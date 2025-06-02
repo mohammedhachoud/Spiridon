@@ -267,7 +267,7 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1, max_functi
         print("  No categorized ceramics found. MLP data preparation cannot proceed.")
         return None, None, None, None, None
 
-    # --- 4. Apply study-specific sampling strategy (same as before) ---
+    # --- 4. Apply study-specific sampling strategy ---
     def apply_sampling_strategy(df, study_name):
         """Apply sampling strategy based on study configuration"""
         # Get class distribution

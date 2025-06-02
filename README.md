@@ -1,52 +1,9 @@
 # Spiridon
 
-This project implements Graph Neural Network (RGCN) models for tasks related to a ceramic ontology dataset. It includes:
-1.  **Link Prediction:** Predicting the root category a ceramic object belongs to.
-2.  **Node Classification:** Classifying ceramic objects into their root categories.
-3.  **Inductive Prediction:** Predicting categories for new, unseen ceramic objects.
-
-
-## Directory Structure
-
-ceramic_ontology_gnn/
-├── data/
-├── output/                   # For models, logs, predictions
-│   ├── rgcn_study_datasets/
-│   ├── classification_data/
-│   ├── lightning_models/
-│   ├── lightning_logs/
-│   └── predictions/
-├── src/                      # Source code
-│   ├── __init__.py
-│   ├── config.py             # Configurations, paths, hyperparameters
-│   ├── data_loader.py        # Loading raw CSVs
-│   ├── preprocess.py         # Data cleaning and translations
-│   ├── feature_engineering.py # Creation of ceramic_summary, one-hot embeddings
-│   ├── graph_utils.py        # General graph utilities (hierarchy, triplet extraction)
-│   ├── data_preparation/     # NEW: For specific data formatting pipelines
-│   │   ├── __init__.py
-│   │   ├── format_rgcn_link_prediction_data.py  # Was part of graph_utils
-│   │   └── format_rgcn_classification_data.py # Was part of graph_utils
-│   ├── models/               # PyTorch Lightning model definitions
-│   │   ├── __init__.py
-│   │   ├── link_predictor.py
-│   │   └── classifier.py
-│   ├── training/             # Training pipeline logic
-│   │   ├── __init__.py
-│   │   ├── link_prediction_pipeline.py
-│   │   └── classification_pipeline.py
-│   ├── inference/            # Inference scripts (from previous detailed response)
-│   │   ├── __init__.py
-│   │   ├── link_prediction_inference.py
-│   │   └── inductive_inference.py
-│   ├── utils.py              # Utility functions (seeding, plotting)
-│   ├── main_prepare_data.py  # Script to run all data preparation steps
-│   ├── main_link_prediction.py # Script to run link prediction studies
-│   ├── main_classification.py  # Script to run classification studies
-│   └── main_run_inference.py          # Script for inference tasks
-├── requirements.txt          # Python dependencies
-├── README.md                 # This file
-└── .gitignore                # Git ignore file
+This project implements Graph Neural Network (RGCN) and Multi-Layer Perceptron (MLP) models for tasks related to a ceramic ontology dataset. It includes:
+1.  **Link Prediction:** Predicting the root category a ceramic object belongs to. (Not Complete)
+2.  **Node Classification:** Classifying ceramic objects into their root categories using GNNs.
+3.  **MLP Classification:** Classifying ceramic objects into their root categories using an MLP.
 
 ## Setup Instructions
 
@@ -81,16 +38,16 @@ ceramic_ontology_gnn/
 
 ## Running the Project
 
-Ensure your virtual environment is activated. All scripts are run from the project root directory (`ceramic_ontology_gnn/`).
+Ensure your virtual environment is activated. All scripts are run from the project root directory (`spiridon/`).
 
 1.  **Prepare all datasets:**
     This step processes raw data, creates embeddings, and generates specific datasets for link prediction and classification studies.
     ```bash
     python -m src.main_prepare_data --data_path ./data
     ```
-    Outputs will be saved in the `output/rgcn_study_datasets/` and `output/classification_data/` directories.
+    Outputs will be saved in the `output/rgcn_study_datasets/` and `output/classification_data/` directories. This step is also a prerequisite for MLP classification if it relies on processed data from these directories.
 
-2.  **Run Link Prediction Training/Evaluation:**
+2.  **Run Link Prediction Training/Evaluation (RGCN):**
     Specify the study name (`etude1`, `etude1_prime`, or `etude2`).
     ```bash
     python -m src.main_link_prediction --study_name etude1
@@ -99,27 +56,36 @@ Ensure your virtual environment is activated. All scripts are run from the proje
     ```
     Models, logs, and predictions will be saved under the `output/` directory.
 
-3.  **Run Classification Training/Evaluation:**
+3.  **Run Node Classification Training/Evaluation (RGCN):**
     Specify the study name (based on the prepared classification data).
     ```bash
     python -m src.main_classification --study_name etude1
     # python -m src.main_classification --study_name etude1_prime
     # python -m src.main_classification --study_name etude2
     ```
-    Models and logs will be saved under `output/classification_data/<study_name>_root_classification_data/` and `output/lightning_logs/<study_name>_classification/` (adjust paths in script if needed).
+    Models and logs will be saved under `output/classification_data/<study_name>_root_classification_data/` and `output/lightning_logs/<study_name>_classification/`.
 
-4.  **Run Inductive Prediction Test:**
-    This uses a pre-trained link prediction model to predict categories for "new" ceramics.
+4.  **Run MLP Classification Training/Evaluation:**
+    Specify the study name (e.g., `etude2`). The `--data_path` should point to the directory containing the raw or initially processed data needed by `create_mlp_input_data`.
     ```bash
-    python -m src.main_inductive_test --study_name etude1 --data_path ./data --num_test_ceramics 10
+    python -m src.main_mlp_classification --data_path ./data --study_name etude2
     ```
-    Replace `etude1` with the study whose model you want to use for the inductive test.
+    Models and logs will likely be saved under a path similar to GNN classification (e.g., `output/classification_data/<study_name>_mlp_root_classification_data/` and `output/lightning_logs/<study_name>_mlp_classification/`) or a dedicated `output/mlp_outputs/` directory, depending on the script's implementation.
+
+    *Note on MLP input data types:*
+    The `main_mlp_classification.py` script internally uses a function `create_mlp_input_data` to prepare features for the MLP. This function can be configured (e.g., via an `embedding_type` parameter) to use different sets of input features:
+    *   **Type 0:** Only ceramic attributes (origin, color, context, source, reuse, production_fail).
+    *   **Type 1:** Only functions + features.
+    *   **Type 2:** Combined ceramic attributes + functions + features.
+    The provided example command `python -m src.main_mlp_classification --data_path ./data --study_name etude2` will use the feature type as configured within the `main_mlp_classification.py` script (e.g., `embedding_type=2` is used in the development snippet for `etude2`). To experiment with different types, you may need to modify the script or check if it supports a command-line argument to control this behavior.
 
 ## Outputs
 
 *   **`output/rgcn_study_datasets/`**: Contains preprocessed graph data (node mappings, relation mappings, triplets, embeddings) for each link prediction study.
-*   **`output/classification_data/`**: Contains preprocessed graph data and labels for each node classification study.
+*   **`output/classification_data/`**: Contains preprocessed graph data and labels for each node classification study (GNN and potentially MLP if it uses the same structure).
 *   **`output/lightning_models/`**: Stores PyTorch Lightning model checkpoints for link prediction studies.
-*   **`output/classification_data/<study_name>_root_classification_data/checkpoints/`**: Stores PyTorch Lightning model checkpoints for classification studies.
-*   **`output/lightning_logs/`**: Contains logs (e.g., `metrics.csv`) from PyTorch Lightning training runs for both link prediction and classification.
+*   **`output/classification_data/<study_name>_root_classification_data/checkpoints/`**: Stores PyTorch Lightning model checkpoints for GNN classification studies.
+*   **`output/classification_data/<study_name>_mlp_root_classification_data/checkpoints/` (Example Path)**: May store MLP model checkpoints (actual path might vary).
+*   **`output/lightning_logs/`**: Contains logs (e.g., `metrics.csv`) from PyTorch Lightning training runs for link prediction, GNN classification, and MLP classification (e.g., under subdirectories like `<study_name>_classification/` or `<study_name>_mlp_classification/`).
 *   **`output/predictions/`**: Stores CSV files with detailed test set predictions for link prediction studies.
+*   MLP-specific outputs (e.g., trained models, evaluation results) will also be saved, typically within the `output/` directory, possibly under `output/mlp_outputs/` or following a pattern similar to the GNN classification outputs.

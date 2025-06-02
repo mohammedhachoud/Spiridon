@@ -1,10 +1,8 @@
 import os
 import torch
 
-# --- Paths ---
-# Adjust these paths if your project root is different
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Assumes src is one level down
-KAGGLE_INPUT_PATH = "/kaggle/input/db-data/" # Original Kaggle path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+KAGGLE_INPUT_PATH = "/kaggle/input/db-data/"
 LOCAL_DATA_PATH = os.path.join(PROJECT_ROOT, "data")
 OUTPUT_BASE_DIR = os.path.join(PROJECT_ROOT, "output")
 
@@ -14,12 +12,9 @@ LIGHTNING_MODELS_DIR = os.path.join(OUTPUT_BASE_DIR, "lightning_models")
 LIGHTNING_LOGS_DIR = os.path.join(OUTPUT_BASE_DIR, "lightning_logs")
 PREDICTIONS_DIR = os.path.join(OUTPUT_BASE_DIR, "predictions")
 
-
-# --- Model & Training Hyperparameters (Defaults) ---
 BERT_MODEL_NAME = "paraphrase-multilingual-mpnet-base-v2"
-TARGET_EMBEDDING_DIM = 85 # For hybrid embeddings (OHE dimension)
+TARGET_EMBEDDING_DIM = 85
 
-# Link Prediction (RGCNLinkPredictor)
 LP_BATCH_SIZE = 16
 LP_LEARNING_RATE = 5e-4
 LP_NUM_EPOCHS = 200
@@ -30,25 +25,23 @@ LP_DROPOUT = 0.2
 LP_L2_REG = 0.2
 LP_PATIENCE_EARLY_STOPPING = 10
 LP_NEG_SAMPLES_BTC = 4
-LP_USE_SIMILARITY_REL_INIT = False # Default, can be overridden
+LP_USE_SIMILARITY_REL_INIT = False
 LP_TRAIN_RATIO_BTC = 0.7
 LP_VAL_RATIO_BTC = 0.15
 
-EVALUATION_RELATION_NAME = "BELONGS_TO_CATEGORY" # For link prediction
+EVALUATION_RELATION_NAME = "BELONGS_TO_CATEGORY"
 
-# Classification (RGCNClassifier)
-CLF_BATCH_SIZE = 64 # Or adjust as needed, often larger for classification
+CLF_BATCH_SIZE = 64
 CLF_NUM_EPOCHS = 300
 CLF_RGCN_HIDDEN_DIM = 64
 CLF_NUM_RGCN_LAYERS = 2
-CLF_NUM_BASES = None  # Or a default value if RGCNConv needs it
-CLF_LEARNING_RATE = 1e-3     # Much more conservative
-CLF_L2_REG = 0             # Your current L2 might be too strong
-CLF_DROPOUT = 0.2 # Typical L2 for classifiers
-CLF_PATIENCE_EARLY_STOPPING = 5 # From notebook
-CLF_NEG_SAMPLES_TRAINING = 4 # For augmented training in classifier
+CLF_NUM_BASES = None
+CLF_LEARNING_RATE = 1e-4
+CLF_L2_REG = 0
+CLF_DROPOUT = 0.2
+CLF_PATIENCE_EARLY_STOPPING = 5
+CLF_NEG_SAMPLES_TRAINING = 4
 
-# --- Translations & Mappings ---
 COLOR_FR_TO_EN = {
     'Vert': 'Green', 'Brun': 'Brown', 'Violacé': 'Violet',
     'Bleu': 'Blue', 'Jaune moutarde': 'Mustard yellow', 'Brun-noir': 'Brown-black',
@@ -74,10 +67,8 @@ CODE_TO_COUNTRY = {
     'EGY': 'Egypt', 'UKR': 'Ukraine', 'MAR': 'Morocco', '??': 'Unknown country'
 }
 
-# --- Device ---
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# --- CSV Filenames (as keys for dfs dictionary) ---
 CSV_FILES = [
     "ceramic", "object_colors", "object_colors_attrib", "object_feature",
     "object_feature_combined_names", "object_feature_attrib",
@@ -89,8 +80,6 @@ CSV_FILES = [
     "Features_Ontology_PF_translated"
 ]
 
-# Mapping notebook filenames to simpler keys for dfs dictionary
-# Adjust keys if you prefer different ones
 FILENAME_TO_KEY_MAP = {
     "ceramic.csv": "ceramic",
     "object_colors.csv": "object_colors",

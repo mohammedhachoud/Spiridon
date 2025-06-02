@@ -6,21 +6,19 @@ import os
 import json
 import traceback
 import warnings
-from collections import defaultdict # Used in adapt_rgcn_data
-
+from collections import defaultdict
 from .. import config
 
-# --- Helper: get_level1_root_group (from your provided code) ---
+# --- Helper: get_level1_root_group ---
 def get_level1_root_group(node_str):
     if not isinstance(node_str, str) or not node_str.startswith('Cat_'):
         return None 
     
     if "_Root_" not in node_str:
         parts = node_str.split('_')
-        if len(parts) == 2 and parts[0] == 'Cat': # Corrected from 'Cat_'
+        if len(parts) == 2 and parts[0] == 'Cat':
              try:
-                  _ = int(float(parts[1])) # Validate part is numeric
-                  return node_str 
+                  _ = int(float(parts[1])) 
              except (ValueError, TypeError):
                   warnings.warn(f"Could not parse category ID from node string '{node_str}' lacking _Root_.")
                   return None
@@ -35,21 +33,12 @@ def get_level1_root_group(node_str):
 
     try:
         specific_id_part = parts[0] # e.g., "Cat_135"
-        root_id_str_from_node = parts[1] # e.g., "135"
-        
-        # The identifier for a root node in the graph is "Cat_ROOTID_Root_ROOTID"
-        # This function is used on such identifiers (t_node_id)
-        # So, it should simply return the input node_str if it's a valid root identifier.
-        # The mapping from this string identifier to an integer label_id happens later.
+        root_id_str_from_node = parts[1] # e.g., "135"      
         if specific_id_part.split('_')[1] == root_id_str_from_node:
-            return node_str # It is already the consistent root identifier string
+            return node_str 
         else:
-            # This would indicate an unexpected format, like "Cat_156_Root_135"
-            # For label creation, we need the actual root this specific category maps to.
-            # This function was slightly misapplied in its original context if t_node_id was specific.
-            # However, given the trace, it's likely t_node_id *is* the root identifier string.
             warnings.warn(f"Node string '{node_str}' does not seem to be a canonical root identifier. Returning as is for label key.")
-            return node_str # Or handle more strictly if this indicates an error
+            return node_str
             
     except Exception as e:
         warnings.warn(f"Error parsing node string '{node_str}' for root group: {e}")
@@ -98,7 +87,7 @@ def adapt_rgcn_data_for_ceramic_classification(rgcn_data, dfs):
     all_link_pred_triplets = rgcn_data.get('training_triplets', []) + rgcn_data.get('evaluation_triplets', [])
     
     # FIX: Use the correct evaluation relation name
-    EVALUATION_RELATION_NAME = "BELONGS_TO_CATEGORY"  # Define this here or import from config
+    EVALUATION_RELATION_NAME = "BELONGS_TO_CATEGORY"
     
     belongs_to_category_rel_id_link_pred = None
     if 'relation_to_idx' in rgcn_data and EVALUATION_RELATION_NAME in rgcn_data['relation_to_idx']:
@@ -136,7 +125,6 @@ def adapt_rgcn_data_for_ceramic_classification(rgcn_data, dfs):
         if h_node_identifier_ceramic and t_node_identifier_specific_cat and \
            h_node_identifier_ceramic.startswith("Ceramic_") and t_node_identifier_specific_cat.startswith("Cat_"):
             
-            # FIX: Now this condition should be true since we have the mapping
             if h_orig_idx in original_idx_to_new_idx:
                 h_new_idx_clf = original_idx_to_new_idx[h_orig_idx]
                 
@@ -153,7 +141,6 @@ def adapt_rgcn_data_for_ceramic_classification(rgcn_data, dfs):
                 if original_specific_cat_id_from_node_name is None: 
                     continue
 
-                # Now use this original_specific_cat_id to find its original root ID
                 authoritative_root_id_original = cat_to_root_map_original_ids.get(original_specific_cat_id_from_node_name)
 
                 if authoritative_root_id_original is None:
@@ -222,7 +209,7 @@ def adapt_rgcn_data_for_ceramic_classification(rgcn_data, dfs):
     print(f"  Total classes: {label_counter}")
     return classification_data
 
-# --- Helper: convert_numpy_to_python_native (from previous solution) ---
+# --- Helper: convert_numpy_to_python_native---
 def convert_numpy_to_python_native(data):
     if isinstance(data, dict):
         return {k: convert_numpy_to_python_native(v) for k, v in data.items()}
@@ -234,7 +221,7 @@ def convert_numpy_to_python_native(data):
         return float(data)
     elif isinstance(data, np.bool_):
         return bool(data)
-    elif isinstance(data, np.ndarray): # If an array slips in, convert to list
+    elif isinstance(data, np.ndarray): 
         return convert_numpy_to_python_native(data.tolist())
     return data
 
@@ -277,7 +264,6 @@ def process_and_save_classification_data(study_name, study_datasets_dict, dfs_di
         pd.DataFrame(classification_data['training_triplets'], columns=['head_idx', 'relation_idx', 'tail_idx']).to_csv(os.path.join(output_dir, 'training_triplets.csv'), index=False)
         print("    Saved training_triplets.csv")
         
-        # FIX: Ensure ceramic_labels data types are correct before saving
         ceramic_labels_data = []
         for node_idx, label_id in classification_data['ceramic_labels'].items():
             try:
@@ -299,7 +285,7 @@ def process_and_save_classification_data(study_name, study_datasets_dict, dfs_di
         ceramic_labels_df['new_ceramic_node_idx'] = ceramic_labels_df['new_ceramic_node_idx'].astype('int64')
         ceramic_labels_df['label_id'] = ceramic_labels_df['label_id'].astype('int64')
         
-        # Debug: Print ceramic labels info
+        # Print ceramic labels info
         print(f"    Ceramic labels DataFrame shape: {ceramic_labels_df.shape}")
         print(f"    Ceramic labels DataFrame dtypes:\n{ceramic_labels_df.dtypes}")
         print(f"    Ceramic labels DataFrame head:\n{ceramic_labels_df.head()}")
@@ -307,7 +293,6 @@ def process_and_save_classification_data(study_name, study_datasets_dict, dfs_di
         ceramic_labels_df.to_csv(os.path.join(output_dir, 'ceramic_labels.csv'), index=False)
         print("    Saved ceramic_labels.csv")
         
-        # Also fix the label mapping DataFrame
         label_map_data = []
         for label_id in classification_data['label_to_category_id'].keys():
             try:

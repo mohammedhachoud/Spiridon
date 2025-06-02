@@ -30,15 +30,14 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
     
     results = {}
     
-    # Scenario configurations (now focused on MLP architecture differences)
     scenarios = {
         "baseline_architecture": {
             "mlp_params": {
-                'hidden_layer_sizes': (128, 64),
+                'hidden_layer_sizes': (32, 16),
                 'max_iter': 1000,
                 'early_stopping': True,
                 'validation_fraction': 0.15,
-                'alpha': 0.0001
+                'alpha': 0.001
             }
         }
     }
@@ -50,7 +49,7 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
     Type 1: Only functions + features (original behavior)
     Type 2: Combined ceramic attributes + functions + features
     """
-    X, y, root_category_names, function_map, feature_map = create_mlp_input_data(dfs, study_name="etude1", embedding_type=1)
+    X, y, root_category_names, function_map, feature_map = create_mlp_input_data(dfs, study_name="etude2", embedding_type=2)
     
     if X is None or y is None:
         print(f"ERROR: Data preparation failed for study {study_name}")

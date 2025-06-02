@@ -5,7 +5,7 @@ import torch.optim as optim
 import pytorch_lightning as pl
 from torch_geometric.nn import RGCNConv
 import numpy as np
-from torchmetrics import Accuracy, F1Score
+from torchmetrics import Accuracy, F1Score, Precision, Recall
 import warnings
 from ..utils import seed_everything
 
@@ -42,8 +42,10 @@ class RGCNClassifier(pl.LightningModule):
         self.train_f1 = F1Score(task="multiclass", num_classes=self.num_classes, average='macro')
         self.val_f1 = F1Score(task="multiclass", num_classes=self.num_classes, average='macro')
         self.test_f1 = F1Score(task="multiclass", num_classes=self.num_classes, average='macro')
+        self.test_precision = Precision(task="multiclass", num_classes=self.num_classes, average='macro')
+        self.test_recall = Recall(task="multiclass", num_classes=self.num_classes, average='macro')
 
-        # Node Embeddings - FIXED: Better initialization
+        # Node Embeddings 
         if initial_node_embeddings is not None:
             if initial_node_embeddings.shape[0] != self.num_nodes:
                 raise ValueError(f"Initial node embedding rows ({initial_node_embeddings.shape[0]}) != specified num_nodes ({self.num_nodes})")
@@ -53,20 +55,15 @@ class RGCNClassifier(pl.LightningModule):
         else:
             print(f"Initializing node embeddings with Xavier uniform distribution for {self.num_nodes} nodes and embedding dimension {self.embedding_dim}.")
             self.node_emb = nn.Embedding(self.num_nodes, self.embedding_dim)
-            # FIXED: Better initialization with proper scaling
             nn.init.xavier_uniform_(self.node_emb.weight, gain=1.0)
 
-        # FIXED: Simplified RGCN architecture - avoid aggressive dimension reduction
         self.rgcn_layers = nn.ModuleList()
-        
-        # Use config parameters instead of hardcoded progressive reduction
+    
         input_dim = self.embedding_dim
         for i in range(self.num_rgcn_layers):
             if i == self.num_rgcn_layers - 1:
-                # Last layer outputs to rgcn_hidden_dim
                 output_dim = self.rgcn_hidden_dim
             else:
-                # Intermediate layers - gentle reduction or keep same
                 output_dim = max(self.rgcn_hidden_dim, input_dim // 2) if input_dim > self.rgcn_hidden_dim else self.rgcn_hidden_dim
             
             print(f"RGCN Layer {i}: {input_dim} → {output_dim}")
@@ -75,18 +72,16 @@ class RGCNClassifier(pl.LightningModule):
 
         self.dropout_layer = nn.Dropout(self.dropout)
 
-        # FIXED: Simplified MLP Classification Head with proper normalization
         final_rgcn_dim = self.rgcn_hidden_dim
         
         self.classification_head = nn.Sequential(
-            nn.LayerNorm(final_rgcn_dim),  # Add normalization
+            nn.LayerNorm(final_rgcn_dim),  
             nn.Linear(final_rgcn_dim, final_rgcn_dim // 2),
             nn.ReLU(),
             nn.Dropout(self.dropout),
             nn.Linear(final_rgcn_dim // 2, self.num_classes)
         )
-        
-        # FIXED: Initialize classification head properly
+    
         for module in self.classification_head:
             if isinstance(module, nn.Linear):
                 nn.init.xavier_uniform_(module.weight, gain=1.0)
@@ -147,19 +142,9 @@ class RGCNClassifier(pl.LightningModule):
 
         x = self.node_emb.weight
         
-        # FIXED: Add debugging prints (remove in production)
-        if self.training and hasattr(self, '_debug_step'):
-            if self._debug_step % 100 == 0:  # Print every 100 steps
-                print(f"Initial embedding stats: mean={x.mean().item():.4f}, std={x.std().item():.4f}, max={x.max().item():.4f}")
-        
         # Apply RGCN layers
         for i, layer in enumerate(self.rgcn_layers):
             x = layer(x, self.graph_edge_index, self.graph_edge_type)
-            
-            # FIXED: Add debugging
-            if self.training and hasattr(self, '_debug_step'):
-                if self._debug_step % 100 == 0:
-                    print(f"RGCN layer {i} output stats: mean={x.mean().item():.4f}, std={x.std().item():.4f}, max={x.max().item():.4f}")
             
             if i < len(self.rgcn_layers) - 1:
                 x = F.relu(x)
@@ -168,11 +153,6 @@ class RGCNClassifier(pl.LightningModule):
         return x
 
     def training_step(self, batch, batch_idx):
-        # FIXED: Add debugging counter
-        if not hasattr(self, '_debug_step'):
-            self._debug_step = 0
-        self._debug_step += 1
-        
         if isinstance(batch, list) and len(batch) == 1 and isinstance(batch[0], torch.Tensor):
             batch = batch[0]
         elif not isinstance(batch, torch.Tensor):
@@ -184,11 +164,6 @@ class RGCNClassifier(pl.LightningModule):
 
         labeled_node_indices = batch[:, 0].long()
         labels = batch[:, 1].long()
-        
-        # FIXED: Add class distribution debugging
-        if batch_idx % 100 == 0:
-            unique_labels, counts = torch.unique(labels, return_counts=True)
-            print(f"Batch {batch_idx} label distribution: {dict(zip(unique_labels.tolist(), counts.tolist()))}")
 
         # Get node embeddings from RGCN
         try:
@@ -209,16 +184,11 @@ class RGCNClassifier(pl.LightningModule):
 
         # Pass embeddings through MLP classification head
         logits = self.classification_head(labeled_node_embeddings)
-        
-        # FIXED: Add gradient and logit debugging
-        if batch_idx % 100 == 0:
-            print(f"Logits stats: mean={logits.mean().item():.4f}, std={logits.std().item():.4f}")
-            print(f"Max logit per class: {logits.max(dim=0)[0]}")
 
         # Calculate classification loss
         loss = self.loss_fn(logits, labels)
 
-        # FIXED: Apply L2 regularization properly (only if l2_reg > 0)
+        # Apply L2 regularization if specified
         if self.l2_reg > 0:
             l2_loss = 0
             for param in self.parameters():
@@ -227,10 +197,6 @@ class RGCNClassifier(pl.LightningModule):
             total_loss = loss + self.l2_reg * l2_loss
         else:
             total_loss = loss
-
-        # FIXED: Add loss debugging
-        if batch_idx % 100 == 0:
-            print(f"Batch {batch_idx}: CE Loss={loss.item():.4f}, Total Loss={total_loss.item():.4f}")
 
         # Logging
         batch_size = labeled_node_indices.size(0)
@@ -292,7 +258,7 @@ class RGCNClassifier(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         if isinstance(batch, list) and len(batch) == 1 and isinstance(batch[0], torch.Tensor):
             batch = batch[0]
-        elif not isinstance(batch, torch.tensor):
+        elif not isinstance(batch, torch.Tensor):
              raise ValueError(f"Unexpected batch type in test_step: {type(batch)}")
 
         if batch.numel() == 0:
@@ -327,24 +293,28 @@ class RGCNClassifier(pl.LightningModule):
         preds = torch.argmax(logits, dim=1)
         self.test_acc(preds, labels)
         self.test_f1(preds, labels)
+        self.test_precision(preds, labels)
+        self.test_recall(preds, labels)
         self.log('test_acc', self.test_acc, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
         self.log('test_f1', self.test_f1, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
+        self.log('test_precision', self.test_precision, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
+        self.log('test_recall', self.test_recall, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
 
         return loss
 
     def configure_optimizers(self):
-        # FIXED: Use AdamW with weight decay instead of manual L2
+        # Use AdamW with weight decay instead of manual L2
         if self.l2_reg > 0:
             optimizer = optim.AdamW(self.parameters(), lr=self.learning_rate, weight_decay=self.l2_reg)
         else:
             optimizer = optim.Adam(self.parameters(), lr=self.learning_rate)
             
-        # FIXED: Monitor validation loss instead of accuracy for early stopping
+        # Monitor validation loss for learning rate scheduling
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, 
-            mode='min',  # Monitor loss (minimize)
+            mode='min',
             factor=0.5, 
-            patience=self.patience // 2,  # Reduce LR more frequently than early stopping
+            patience=self.patience // 2,
             verbose=True,
             min_lr=1e-6
         ) 

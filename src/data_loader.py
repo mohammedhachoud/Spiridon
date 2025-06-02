@@ -13,7 +13,7 @@ def load_all_dataframes(data_base_path):
             print(f"  Loaded {filename} as dfs['{key}']")
         except FileNotFoundError:
             print(f"  WARNING: File not found {file_path} for key '{key}'")
-            dfs[key] = pd.DataFrame() # or None, or raise error
+            dfs[key] = pd.DataFrame() 
         except Exception as e:
             print(f"  ERROR loading {filename}: {e}")
             dfs[key] = pd.DataFrame()

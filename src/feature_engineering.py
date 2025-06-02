@@ -27,8 +27,6 @@ def create_ceramic_summary(dfs):
     object_function_attrib_df = dfs['object_function_attrib'].copy()
     object_function_df = dfs['object_function'].copy()
     object_feature_attrib_df = dfs['object_feature_attrib'].copy()
-    # Decide which feature name table to use: object_feature or object_feature_combined_names
-    # The notebook used object_feature in the merge, let's stick to that unless combined_names is preferred
     feature_name_df = dfs['object_feature_combined_names'] if 'object_feature_combined_names' in dfs else dfs['object_feature']
 
     object_colors_attrib_df = dfs['object_colors_attrib'].copy()
@@ -173,12 +171,11 @@ def create_ceramic_summary(dfs):
 
     # --- Aggregation ---
     # Now, the column names in merged_data should be clean or predictably suffixed.
-    # The renamed columns are: tech_cat_name_col (from tech_cat), function_name_final, feature_name_final, color_name_final, period_name_final, context_name_final
     agg_dict = {
         'ceramic_identifier': ('identifier', 'first'),
-        'origin': ('origin', 'first'), # This is the combined one
+        'origin': ('origin', 'first'), 
         'tech_cat_id': ('tech_cat_id', 'first'),
-        'tech_cat_name': (tech_cat_name_col, 'first'), # Name from tech_cat_df
+        'tech_cat_name': (tech_cat_name_col, 'first'),
         'reuse': ('reuse', 'first'),
         'production_fail': ('production_fail', 'first'),
         'period_name_fr': ('period_name_final', 'first'), 
@@ -208,9 +205,6 @@ def create_ceramic_summary(dfs):
 
     # --- Description Generation ---
     def generate_ceramic_description(row, code_to_country_map):
-        # ... (Your generate_ceramic_description function from Cell 7 - copied from your snippet)
-        # Ensure it uses the correct column names from ceramic_summary
-        # e.g., row['color_name_list'] instead of row['color_name_fr']
         parts = []
         colors = row['color_name_list'] # Use the aggregated list column
         valid_colors = []
@@ -228,15 +222,15 @@ def create_ceramic_summary(dfs):
         if row.get('production_fail') == True:
             base_phrase += " with a production fault"
 
-        origin_text = row['origin'] # This should be 'site_name, Country Name'
+        origin_text = row['origin']
         site_name, country_name_full = "Unknown", ""
         if pd.notna(origin_text) and isinstance(origin_text, str):
             if ', ' in origin_text:
                 origin_parts_desc = origin_text.split(', ', 1)
                 site_name = origin_parts_desc[0]
                 if len(origin_parts_desc) > 1:
-                    country_name_full = origin_parts_desc[1] # Already mapped to full name
-            else: # Should not happen if formatting is consistent
+                    country_name_full = origin_parts_desc[1] 
+            else:
                 site_name = origin_text
 
         site = site_name if site_name != "Unknown" else None
