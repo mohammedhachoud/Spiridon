@@ -1,0 +1,249 @@
+"country_code","country_name"
+EST,Estonie
+FLK,Falkland (Îles)/Malouines (Îles)
+BOL,Bolivie
+BRA,Brésil
+BRB,Barbade
+BRN,Brunéi Darussalam
+BTN,Bhoutan
+BVT,Bouvet (Île)
+BWA,Botswana
+DZA,Algérie
+AGO,Angola
+ALA,Åland (Îles)
+ALB,Albanie
+AND,Andorre
+ARG,Argentine
+ARM,Arménie
+ASM,Samoa américaines
+ATA,Antarctique
+AUS,Australie
+AUT,Autriche
+AZE,Azerbaïdjan
+BEL,Belgique
+BEN,Bénin
+BFA,Burkina Faso
+BGD,Bangladesh
+BGR,Bulgarie
+BHS,Bahamas
+BIH,Bosnie-Herzégovine
+BLR,Bélarus
+BLZ,Belize
+BMU,Bermudes
+AIA,Anguilla
+ATG,Antigua-et-Barbuda
+ABW,Aruba
+BHR,Bahreïn
+BES,"Bonaire, Saint-Eustache et Saba"
+IOT,Indien (le Territoire britannique de l'océan)
+BDI,Burundi (le)
+CPV,Cabo Verde
+KHM,Cambodge (le)
+TCD,Tchad (le)
+HRV,Croatie (la)
+CUB,Cuba
+CUW,Curaçao
+CYP,Chypre
+DJI,Djibouti
+SLV,El Salvador
+GIB,Gibraltar
+GUM,Guam
+GGY,Guernesey
+HTI,Haïti
+HMD,Heard-et-Îles MacDonald (l'Île)
+HKG,Hong Kong
+IND,Inde (l')
+IDN,Indonésie (l')
+IRN,Iran (République Islamique d')
+IRQ,Iraq (l')
+IRL,Irlande (l')
+IMN,Île de Man
+ISR,Israël
+ITA,Italie (l')
+JAM,Jamaïque (la)
+JPN,Japon (le)
+JEY,Jersey
+JOR,Jordanie (la)
+KAZ,Kazakhstan (le)
+KEN,Kenya (le)
+KIR,Kiribati
+PRK,Corée (la République populaire démocratique de)
+KOR,Corée (la République de)
+KWT,Koweït (le)
+KGZ,Kirghizistan (le)
+LAO,Lao (la République démocratique populaire)
+LVA,Lettonie (la)
+LSO,Lesotho (le)
+LBR,Libéria (le)
+LIE,Liechtenstein (le)
+LTU,Lituanie (la)
+LUX,Luxembourg (le)
+MAC,Macao
+MDG,Madagascar
+MWI,Malawi (le)
+MYS,Malaisie (la)
+MDV,Maldives (les)
+MLI,Mali (le)
+MLT,Malte
+MHL,Marshall (les Îles)
+MTQ,Martinique (la)
+MRT,Mauritanie (la)
+MUS,Maurice
+MYT,Mayotte
+MEX,Mexique (le)
+FSM,Micronésie (États fédérés de)
+MDA,Moldova (la République de)
+MCO,Monaco
+MNG,Mongolie (la)
+MNE,Monténégro (le)
+MSR,Montserrat
+MAR,Maroc (le)
+MOZ,Mozambique (le)
+MMR,Myanmar (le)
+NAM,Namibie (la)
+NRU,Nauru
+NPL,Népal (le)
+NLD,Pays-Bas (les)
+NCL,Nouvelle-Calédonie (la)
+NZL,Nouvelle-Zélande (la)
+NIC,Nicaragua (le)
+NER,Niger (le)
+NGA,Nigéria (le)
+NIU,Niue
+NFK,Norfolk (l'Île)
+MKD,Macédoine du Nord (la)
+MNP,Mariannes du Nord (les Îles)
+NOR,Norvège (la)
+OMN,Oman
+PAK,Pakistan (le)
+PLW,Palaos (les)
+PSE,"Palestine, État de"
+PAN,Panama (le)
+PNG,Papouasie-Nouvelle-Guinée (la)
+PRY,Paraguay (le)
+PER,Pérou (le)
+PHL,Philippines (les)
+PCN,Pitcairn
+POL,Pologne (la)
+PRT,Portugal (le)
+PRI,Porto Rico
+QAT,Qatar (le)
+REU,Réunion (La)
+ROU,Roumanie (la)
+RUS,Russie (la Fédération de)
+RWA,Rwanda (le)
+BLM,Saint-Barthélemy
+SHN,"Sainte-Hélène, Ascension et Tristan da Cunha"
+SWZ,Eswatini
+ETH,Éthiopie
+FRO,Féroé
+FJI,Fidji
+FIN,Finlande
+FRA,France
+GUF,Guyane française
+PYF,Polynésie française
+ATF,Terres australes françaises
+GAB,Gabon
+EGY,Égypte
+CAF,République centrafricaine
+CAN,Canada
+GNQ,Guinée équatoriale
+GMB,Gambie
+GRC,Grèce
+GRL,Groenland
+GRD,Grenade
+GTM,Guatemala
+GNB,Guinée-Bissau
+GUY,Guyana
+VAT,Vatican
+HND,Honduras
+HUN,Hongrie
+ISL,Islande
+LBN,Liban
+LBY,Libye
+CCK,Cocos (Îles)/ Keeling (Îles)
+CHL,Chili
+CHN,Chine
+CIV,Côte d'Ivoire
+CMR,Cameroun
+COD,République démocratique du Congo
+COG,Congo
+COK,Cook (Îles)
+COL,Colombie
+COM,Comores
+CRI,Costa Rica
+CXR,Christmas (Île)
+CYM,Caïmans (Îles)
+CZE,Tchéquie
+DEU,Allemagne
+DMA,Dominique
+DNK,Danemark
+DOM,République dominicaine
+ECU,Équateur
+ERI,Érythrée
+GEO,Géorgie
+GHA,Ghana
+GIN,Guinée
+GLP,Guadeloupe
+KNA,Saint-Kitts-et-Nevis
+LCA,Sainte-Lucie
+MAF,Saint-Martin (partie française)
+SPM,Saint-Pierre-et-Miquelon
+VCT,Saint-Vincent-et-les Grenadines
+WSM,Samoa (le)
+SMR,Saint-Marin
+STP,Sao Tomé-et-Principe
+SAU,Arabie saoudite (l')
+SEN,Sénégal (le)
+SRB,Serbie (la)
+SYC,Seychelles (les)
+SLE,Sierra Leone (la)
+SGP,Singapour
+SXM,Saint-Martin (partie néerlandaise)
+SVK,Slovaquie (la)
+SVN,Slovénie (la)
+SLB,Salomon (les Îles)
+SOM,Somalie (la)
+ZAF,Afrique du Sud (l')
+SGS,Géorgie du Sud-et-les Îles Sandwich du Sud (la)
+SSD,Soudan du Sud (le)
+LKA,Sri Lanka
+SDN,Soudan (le)
+SUR,Suriname (le)
+SJM,Svalbard et l'Île Jan Mayen (le)
+SWE,Suède (la)
+TWN,Taïwan (Province de Chine)
+TJK,Tadjikistan (le)
+TZA,Tanzanie (la République-Unie de)
+THA,Thaïlande (la)
+TLS,Timor-Leste (le)
+TGO,Togo (le)
+TKL,Tokelau (les)
+TON,Tonga (les)
+TTO,Trinité-et-Tobago (la)
+TKM,Turkménistan (le)
+TCA,Turks-et-Caïcos (les Îles)
+TUV,Tuvalu (les)
+UGA,Ouganda (l')
+UKR,Ukraine (l')
+UMI,Îles mineures éloignées des États-Unis (les)
+USA,États-Unis d'Amérique (les)
+URY,Uruguay (l')
+VUT,Vanuatu (le)
+VEN,Venezuela (République bolivarienne du)
+VNM,Viet Nam (le)
+VGB,Vierges britanniques (les Îles)
+VIR,Vierges des États-Unis (les Îles)
+WLF,Wallis-et-Futuna
+YEM,Yémen (le)
+ZMB,Zambie (la)
+ZWE,Zimbabwe (le)
+ESH,Sahara occidental
+ESP,Espagne
+CHE,Suisse
+GBR,Royaume-Uni de Grande-Bretagne et d'Irlande du Nord
+ARE,Émirats arabes unis
+TUN,Tunisie
+TUR,Turquie
+UZB,Ouzbékistan
+SYR,Syrie (République arabe syrienne)

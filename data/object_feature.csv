@@ -1,0 +1,106 @@
+"id","feature_name_fr","feature_level","feature_parent","feature_disembiguation_fr","feature_priority"
+4,Tourné/modelé,2,2,"Tourné sur âme, grosses formes",NULL
+5,A la main,1,1,NULL,NULL
+6,Modelé,2,5,NULL,NULL
+7,Modelé/tournassé,2,5,NULL,NULL
+2,Au tour,1,1,NULL,NULL
+3,Tourné,2,2,"",NULL
+11,Au moule,1,1,NULL,NULL
+12,Moulé,2,11,NULL,NULL
+13,Coulé,2,11,NULL,NULL
+16,Calcaire,2,15,NULL,NULL
+18,Riche en fer,3,17,NULL,NULL
+20,Sableuse,2,15,NULL,NULL
+21,Artificielle,2,15,NULL,NULL
+22,Porcelaine,2,15,NULL,NULL
+23,Siliceuse,2,15,NULL,NULL
+24,Grès,2,15,NULL,NULL
+27,Mica,2,26,NULL,NULL
+28,Quartz,2,26,NULL,NULL
+29,Calcite/chaux,2,26,NULL,NULL
+30,Shiste,2,26,NULL,NULL
+31,Végétal,2,26,NULL,NULL
+34,Nodules ferreux,3,32,NULL,NULL
+33,Chamotte,3,32,NULL,NULL
+38,Lissage,2,36,Polissage couvrant,NULL
+41,Glaçure plombifère,2,40,NULL,NULL
+48,Atmosphère de cuisson,1,47,NULL,NULL
+49,Oxydante,2,48,NULL,NULL
+50,Réductrice,2,48,NULL,NULL
+51,Aléatoire,2,48,Non maîtrisée,NULL
+52,Traces d'enfournement,1,47,NULL,NULL
+53,Pernette,2,52,NULL,NULL
+54,Emboîtement,2,52,NULL,NULL
+58,Polissage,2,57,Polissage ordonné,NULL
+60,"Peinte, pigment",2,57,NULL,NULL
+61,"Peinte, glaçure/émail",2,57,NULL,NULL
+62,"Peinte, structuré engobe",2,57,NULL,NULL
+63,"Peinte, mêlé engobe et glaçure",2,57,NULL,NULL
+69,Moulé,2,57,NULL,NULL
+70,Appliqué libre,2,57,"Cordon, Pétales",NULL
+71,Moulé appliqué,2,57,Mascaron,NULL
+72,Découpé,2,57,Ajouré,NULL
+73,Transfert,2,57,NULL,NULL
+75,A l'éponge,2,57,NULL,NULL
+79,Marque de fabrique,1,78,NULL,NULL
+84,Signes,1,78,NULL,NULL
+25,Autre,2,15,NULL,5
+55,Autre,2,52,NULL,5
+32,Autre,2,26,NULL,5
+19,Kaolinitique,2,15,NULL,0
+74,Au pochoir,2,57,NULL,NULL
+43,Glaçure alcaline,2,40,NULL,NULL
+44,Glaçure alcalino-plombifère,2,40,NULL,NULL
+45,Glaçure au sel,2,40,NULL,NULL
+65,Imprimé,2,57,NULL,NULL
+68,Repoussé,2,57,NULL,NULL
+88,Digité,2,57,NULL,NULL
+89,Hachuré,2,57,NULL,NULL
+57,Technique de décor,1,56,NULL,NULL
+37,Sans revêtement,1,35,NULL,NULL
+40,Glaçure ou émail,1,35,Revêtement vitreux,NULL
+39,Blanchissement de surface,2,36,Eclaircissement de surface,NULL
+46,Engobe,1,35,NULL,NULL
+92,"Peinte, lustre métallique",2,57,NULL,NULL
+17,Non calcaire,2,15,NULL,NULL
+93,Variées,2,26,NULL,NULL
+1,Façonnage,0,NULL,NULL,1
+14,Pâte,0,NULL,NULL,0
+47,Cuisson,0,NULL,NULL,5
+78,Marques et signes,0,NULL,NULL,6
+35,Revêtement,0,NULL,NULL,4
+94,Décor,0,NULL,NULL,3
+95,Décor géométrique,1,94,NULL,NULL
+96,Décor figuré,1,94,NULL,NULL
+97,Décor zoomorphe,1,94,NULL,NULL
+98,Décor végétal,1,94,NULL,NULL
+99,Héraldique,1,94,NULL,NULL
+77,Guilloché,2,57,NULL,NULL
+26,Inclusions/dégraissants,1,14,NULL,2
+15,Matrice,1,14,NULL,1
+100,Décor calligraphique,1,94,NULL,NULL
+64,Excisé,2,57,Champlevé,NULL
+59,Incisée,2,57,NULL,NULL
+103,Incisée et/ou imprimée au peigne,2,57,NULL,NULL
+101,Festonné,2,57,NULL,NULL
+67,Imprimé avec un autre outil,3,65,NULL,5
+9,Découpé,2,5,NULL,NULL
+10,Raclé,2,5,NULL,NULL
+42,Émail,2,40,Glaçure stannifère,NULL
+104,Sur âme,2,5,NULL,NULL
+66,Imprimé à la molette,3,65,Imprimé à la roulette,NULL
+106,Au tampon,2,57,NULL,NULL
+56,Technique de décor et aspect de surface,0,NULL,NULL,2
+36,Aspect de surface,1,56,NULL,NULL
+107,Surface craquelée-bleutée,2,36,NULL,NULL
+108,Cannelures,2,36,NULL,NULL
+80,Imprimée en creux,2,79,NULL,NULL
+82,Incisée,2,79,NULL,NULL
+102,Moulée en relief,2,79,NULL,NULL
+83,Peinte,2,79,NULL,NULL
+81,Imrpimée au tampon,2,79,NULL,NULL
+109,Moulé en relief,2,84,NULL,NULL
+86,Incisé post-cuisson,2,84,NULL,NULL
+105,Imprimé en creux,2,84,NULL,NULL
+91,Incisé avant cuisson,2,84,NULL,NULL
+87,Peint,2,84,NULL,NULL

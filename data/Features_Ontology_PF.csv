@@ -1,0 +1,105 @@
+id,feature_name_fr,feature_parent,feature_grandpa,tree_depth,Nom complet,Relation,Ceramic_Relation,Nom abrégé avec la relation
+47,Cuisson,,0,0,Cuisson,,Has_Cuisson,
+48,└ Atmosphère de cuisson,47,47,1,Cuisson selon l'atmosphère,is-a,Has_Cuisson,Cuisson
+49, └ Oxydante,48,47,2,Cuisson en atmosphère oxydante,is-a,Has_Cuisson,Cuisson selon l'atmosphère 
+50, └ Réductrice,48,47,2,Cuisson en atmosphère réductrice,is-a,Has_Cuisson,Cuisson selon l'atmosphère 
+51, └ Aléatoire,48,47,2,Cuisson en atmosphère non maîtrisée,is-a,Has_Cuisson,Cuisson selon l'atmosphère 
+52,└ Traces d'enfournement,47,47,1,Cuisson avec traces d’enfournement,is-a,Has_Cuisson,Cuisson
+53, └ Pernette,52,47,2,Cuisson avec traces de pernette,is-a,Has_Cuisson,Cuisson avec traces d’enfournement
+54, └ Emboîtement,52,47,2,Cuisson avec traces d'emboîtement,is-a,Has_Cuisson,Cuisson avec traces d’enfournement
+55, └ Autre,52,47,2,Cuisson avec traces d'enfournement autre que pernettes et emboîtement/Cuisson avec traces d'enfournement atypique,is-a,Has_Cuisson,Cuisson avec traces d’enfournement
+94,Décor,,0,0,Décor,,Has_Décor,
+95,└ Décor géométrique,94,94,1,Décor géométrique,is-a,Has_Décor,Décor
+96,└ Décor figuré,94,94,1,Décor figuré,is-a,Has_Décor,Décor
+97,└ Décor zoomorphe,94,94,1,Décor zoomorphe,is-a,Has_Décor,Décor
+98,└ Décor végétal,94,94,1,Décor végétal,is-a,Has_Décor,Décor
+99,└ Héraldique,94,94,1,Décor Héraldique,is-a,Has_Décor,Décor
+100,└ Décor calligraphique,94,94,1,Décor calligraphique,is-a,Has_Décor,Décor
+1,Façonnage,,0,0,Façonnage,,Has_Faconnage,
+2,└ Au tour,1,1,1,Faconnage au tour,is-a,Has_Faconnage,Faconnage
+3, └ Tourné,2,1,2,Faconnage tourné,is_a,Has_Faconnage,Faconnage au tour
+4, └ Tourné/modelé,2,1,2,Façonnage tourné et moulé,is_a,Has_Faconnage,Faconnage au tour
+5,└ A la main,1,1,1,Faconnage à la main,is_a,Has_Faconnage,Faconnage
+6, └ Modelé,5,1,2,Façonnage modelé,is_a,Has_Faconnage,Faconnage à la main
+7, └ Modelé/tournassé,5,1,2,Faconnage modelée et tournassé,is_a,Has_Faconnage,Faconnage à la main
+9, └ Découpé,5,1,2,Fcaonnage découpé,is_a,Has_Faconnage,Faconnage à la main
+10, └ Raclé,5,1,2,Faconnage raclé,is_a,Has_Faconnage,Faconnage à la main
+104, └ Sur âme,5,1,2,Faconnage montée sur âme,is_a,Has_Faconnage,Faconnage à la main
+11,└ Au moule,1,1,1,Faconnage au moule,is-a,Has_Faconnage,Faconnage
+12, └ Moulé,11,1,2,Faconnage moulée,is_a,Has_Faconnage,Faconnage au moule
+13, └ Coulé,11,1,2,Faconnage coulée,is_a,Has_Faconnage,Faconnage au moule
+78,Marques et signes,,0,0,Marques et signes,is-a,Has_Marque,
+79,└ Marque de fabrique,78,78,1,Marque de fabrique,is-a,Has_Marque,Marque ou signe
+80, └ Imprimée en creux,79,78,2,Marque imprimée en creux,is-a,Has_Marque,marque 
+81, └ Imrpimée au tampon,79,78,2,Marque imprimée au tampon,is-a,Has_Marque,marque 
+82, └ Incisée,79,78,2,Marque incisée,is-a,Has_Marque,marque 
+83, └ Peinte,79,78,2,Marque peinte,is-a,Has_Marque,marque 
+102, └ Moulée en relief,79,78,2,Marque moulée en relief,is-a,Has_Marque,marque 
+84,└ Signes,78,78,1,Signe de Fabrique ,is-a,Has_Signe,Marque ou signe
+86, └ Incisé post-cuisson,84,78,2,Signe incisé post-cuisson,is-a,Has_Signe,Signe de Fabrique 
+87, └ Peint,84,78,2,Signe peint,is-a,Has_Signe,Signe de Fabrique 
+91, └ Incisé avant cuisson,84,78,2,Signe incisé avant cuisson,is-a,Has_Signe,Signe de Fabrique 
+105, └ Imprimé en creux,84,78,2,Signe imprimé en creux,is-a,Has_Signe,Signe de Fabrique 
+109, └ Moulé en relief,84,78,2,Signe moulé en relief,is-a,Has_Signe,Signe de Fabrique 
+14,Pâte,,0,0,Pâte,is-a,Has_Pate,
+15,└ Matrice,14,14,1,Pate avec Matrice,is-a,Has_Pate,Pate
+16, └ Calcaire,15,14,2,Pâte calcaire,is-a,Has_Pate,Matrice de pâte
+17, └ Non calcaire,15,14,2,Pâte non calcaire,is-a,Has_Pate,Matrice de pâte
+18,  └ Riche en fer,17,14,3,Pâte non calcaire riche en fer,is-a,Has_Pate,Matrice de pâte
+19, └ Kaolinitique,15,14,2,Pâte kaolinitique,is-a,Has_Pate,Matrice de pâte
+20, └ Sableuse,15,14,2,Pâte sableuse,is-a,Has_Pate,Matrice de pâte
+21, └ Artificielle,15,14,2,Pâte artificielle,is-a,Has_Pate,Matrice de pâte
+22, └ Porcelaine,15,14,2,Porcelaine,is-a,Has_Pate,Matrice de pâte
+23, └ Siliceuse,15,14,2,Pâte siliceuse,is-a,Has_Pate,Matrice de pâte
+24, └ Grès,15,14,2,Grès,is-a,Has_Pate,Matrice de pâte
+25, └ Autre,15,14,2,Pâte à matrice indéfinie,is-a,Has_Pate,Matrice de pâte
+26,└ Inclusions/dégraissants,14,14,1,Pate avec Inclusion,is-a,Has_Pate,Pate
+27, └ Mica,26,14,2,Pâte à inclusions de mica,is-a,Has_Pate,Inclusion dans la pâte
+28, └ Quartz,26,14,2,Pâte à inclusions de quartz,is-a,Has_Pate,Inclusion dans la pâte
+29, └ Calcite/chaux,26,14,2,Pâte à inclusions de calcite ou de chaux,is-a,Has_Pate,Inclusion dans la pâte
+30, └ Shiste,26,14,2,Pâte à inclusions de shiste,is-a,Has_Pate,Inclusion dans la pâte
+31, └ Végétal,26,14,2,Pâte à inclusions végétales,is-a,Has_Pate,Inclusion dans la pâte
+33, └ Chamotte,26,14,2,Pâte à inclusions de chamotte,is-a,Has_Pate,Inclusion dans la pâte
+34, └ Nodules ferreux,26,14,2,Pâte à inclusions de nodules ferreus,is-a,Has_Pate,Inclusion dans la pâte
+93, └ Variées,26,14,2,Pâte à inclusions variées indéfinies,is-a,Has_Pate,Inclusion dans la pâte
+35,Revêtement,,0,0,Revêtement,,Has_revetement,
+37,└ Sans revêtement,35,35,1,Absence de revêtement,is-a,Has_revetement,revêtement 
+40,└ Glaçure ou émail,35,35,1,Glaçure ou émail,is-a,Has_revetement,revêtement 
+41, └ Glaçure plombifère,40,35,2,Glaçure plombifère,is-a,Has_revetement,Glaçure ou émail
+42, └ Émail,40,35,2,Émail,is-a,Has_revetement,Glaçure ou émail
+43, └ Glaçure alcaline,40,35,2,Glaçure alcaline,is-a,Has_revetement,Glaçure ou émail
+44, └ Glaçure alcalino-plombifère,40,35,2,Glaçure alcalino-plombifère,is-a,Has_revetement,Glaçure ou émail
+45, └ Glaçure au sel,40,35,2,Glaçure au sel,is-a,Has_revetement,Glaçure ou émail
+46,└ Engobe,35,35,1,Engobe,is-a,Has_revetement,revêtement 
+56,Technique de décor or aspect de surface,,0,0,Technique de décor or aspect de surface,,Has_Technique de décor or aspect de surface,
+36,└ Aspect de surface,56,56,1,Aspect de surface ,is-a,Has_Aspect de surface,Technique de décor or aspect de surface
+38, └ Lissage,36,56,2,Lissage à la surface,is-a,Has_Aspect de surface,Aspect de surface 
+39, └ Blanchissement de surface,36,56,2,Blanchissement de surface,is-a,Has_Aspect de surface,Aspect de surface 
+107, └ Surface craquelée-bleutée,36,56,2,Surface craquelée-bleutée,is-a,Has_Aspect de surface,Aspect de surface 
+108, └ Cannelures,36,56,2,Surface à cannelures,is-a,Has_Aspect de surface,Aspect de surface 
+57,└ Technique de décor,56,56,1,Technique de décor,is-a,Has_technique de décor,Technique de décor or aspect de surface
+58, └ Polissage,57,56,2,Décor de polissage,is-a,Has_technique de décor,Technique de décor
+59, └ Incisée,57,56,2,Décor incisé,is-a,Has_technique de décor,Technique de décor
+60," └ Peinte, pigment",57,56,2,Décor peint au pigment,is-a,Has_technique de décor,Technique de décor
+61," └ Peinte, glaçure/émail",57,56,2,Décor peint en glaçure ou à l’émail,is-a,Has_technique de décor,Technique de décor
+62," └ Peinte, structuré engobe",57,56,2,"Décor structuré, peint à l’engobe",is-a,Has_technique de décor,Technique de décor
+63," └ Peinte, mêlé engobe et glaçure",57,56,2,"Décor mêlé, peint à l’engobe et à la glaçure",is-a,Has_technique de décor,Technique de décor
+64, └ Excisé,57,56,2,Décor excisé,is-a,Has_technique de décor,Technique de décor
+65, └ Imprimé,57,56,2,Décor imprimé,is-a,Has_technique de décor,Technique de décor
+66,  └ Imprimé à la molette,65,56,3,Décor imprimé à la molette,is-a,Has_technique de décor,Technique de décor
+67,  └ Imprimé au poinçon ou au tampon,65,56,3,Décor imprimé au poinçon ou au tampon,is-a,Has_technique de décor,Technique de décor
+68, └ Repoussé,57,56,2,Décor repoussé,is-a,Has_technique de décor,Technique de décor
+69, └ Moulé,57,56,2,Décor moulé,is-a,Has_technique de décor,Technique de décor
+70, └ Appliqué libre,57,56,2,Décor appliqué libre,is-a,Has_technique de décor,Technique de décor
+71, └ Moulé appliqué,57,56,2,Décor moulé et rapporté,is-a,Has_technique de décor,Technique de décor
+72, └ Découpé,57,56,2,Décor découpé,is-a,Has_technique de décor,Technique de décor
+73, └ Transfert,57,56,2,Décor réalisé au transfert,is-a,Has_technique de décor,Technique de décor
+74, └ Au pochoir,57,56,2,Décor réalisé au pochoir,is-a,Has_technique de décor,Technique de décor
+75, └ A l'éponge,57,56,2,Décor réalisé à l’éponge,is-a,Has_technique de décor,Technique de décor
+77, └ Guilloché,57,56,2,Décor guilloché,is-a,Has_technique de décor,Technique de décor
+88, └ Digité,57,56,2,Décor digité,is-a,Has_technique de décor,Technique de décor
+89, └ Hachuré,57,56,2,Décor hachuré,is-a,Has_technique de décor,Technique de décor
+92," └ Peinte, lustre métallique",57,56,2,Décor peint au lustre métallique,is-a,Has_technique de décor,Technique de décor
+101, └ Festonné,57,56,2,Décor festonné,is-a,Has_technique de décor,Technique de décor
+103, └ Incisée et/ou imprimée au peigne,57,56,2,Decor incisé ou imprimé au peinge,is-a,Has_technique de décor,Technique de décor
+106, └ Au tampon,57,56,2,Décor peint au tampon,is-a,Has_technique de décor,Technique de décor

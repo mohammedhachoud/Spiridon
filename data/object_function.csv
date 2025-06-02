@@ -1,0 +1,182 @@
+"id","function_name_fr","function_level","function_parent","function_disembiguation_fr","function_priority"
+2,service et table,1,1,NULL,NULL
+3,bol,2,2,NULL,NULL
+4,écuelle,2,2,NULL,NULL
+6,bassin,2,2,NULL,NULL
+7,assiette,2,2,NULL,NULL
+162,forme à bec tubulaire,2,10,NULL,NULL
+200,gourde,2,10,NULL,4
+11,cruche,2,10,NULL,NULL
+14,forme à anse de panier,2,10,NULL,NULL
+15,tasse,2,10,NULL,NULL
+16,gobelet,2,10,NULL,NULL
+174,stockage spécifique,1,39,NULL,NULL
+19,culinaire,1,1,"",NULL
+172,olla,3,20,NULL,NULL
+21,marmite,2,19,NULL,NULL
+22,jatte,2,19,NULL,NULL
+23,lèchefritte,2,19,NULL,NULL
+24,poêlon,2,19,NULL,NULL
+25,plat,2,19,NULL,NULL
+26,toupin,2,19,cafetière,NULL
+28,couvercle,2,27,NULL,NULL
+29,faisselle,2,27,NULL,NULL
+32,entonnoir,3,31,NULL,NULL
+52,luminaire,1,51,NULL,NULL
+53,lampe,2,52,NULL,NULL
+57,piété,1,51,NULL,NULL
+58,bénitier,2,57,NULL,NULL
+59,crucifix,2,57,NULL,NULL
+64,pot d'aisance,2,63,NULL,NULL
+65,bidet,2,63,NULL,NULL
+66,pot à pomade,2,63,NULL,NULL
+67,plat à barbe,2,63,NULL,NULL
+68,bugadier,2,63,cuvier,NULL
+72,feu,1,51,NULL,NULL
+179,vestiges de fours et de cuisson,0,NULL,NULL,7
+74,couvre feu,2,72,NULL,NULL
+75,brûle parfum,2,72,NULL,NULL
+76,pipe,2,72,NULL,NULL
+78,trompe d'appel,2,77,corne d'appel,NULL
+79,taraillettes,2,77,NULL,NULL
+82,poupée,2,77,baigneur,NULL
+84,jeton,2,77,palet,NULL
+89,séparateur de cuisson,2,88,"pernette, bobine, tube",NULL
+90,casette,2,88,gazette,NULL
+91,cale,2,88,plaque,NULL
+92,barre de four,2,88,NULL,NULL
+98,céramique technique ou d'artisanat,1,87,NULL,NULL
+100,moule à sucre,2,98,NULL,NULL
+103,pot à mélasse,2,98,NULL,NULL
+104,alambic,2,98,NULL,NULL
+105,poids,2,98,fusaïllole,NULL
+140,bassin de malade,2,63,bassin de lit,NULL
+123,tuyau,1,108,NULL,NULL
+163,ibrik,3,162,NULL,NULL
+31,autre,2,27,NULL,5
+60,autre,2,57,NULL,5
+77,autre,1,51,NULL,5
+94,tampon ou poinçon,2,98,NULL,NULL
+106,autre,2,98,NULL,5
+119,carreau,1,108,mallon,NULL
+43,jarron,1,39,NULL,NULL
+1,vaisselle,0,NULL,NULL,0
+51,spécifique,0,NULL,NULL,2
+87,outils,0,NULL,NULL,3
+108,architecture,0,NULL,NULL,4
+130,chope,2,10,NULL,4
+131,chope mesure,2,98,NULL,4
+132,pichet,2,10,NULL,NULL
+133,coupelle,2,2,NULL,NULL
+134,tirelire,2,77,NULL,NULL
+135,aquamanil,2,10,NULL,NULL
+136,albarello,2,63,NULL,NULL
+63,"hygiène, toilette et santé",1,51,NULL,NULL
+70,crachoir,2,63,NULL,NULL
+71,rince-oeil,2,63,NULL,NULL
+137,vase de montre,2,63,NULL,NULL
+138,chevrette,2,63,NULL,NULL
+139,pot canon,2,63,NULL,NULL
+99,creuset,2,88,NULL,NULL
+93,moule,2,98,NULL,NULL
+54,chandelier ou bougeoir,2,52,NULL,NULL
+97,crochet,2,88,ox-yoke,NULL
+96,rondeau,2,88,NULL,NULL
+56,lanterne,2,52,NULL,NULL
+124,crépine,1,108,NULL,NULL
+116,brique,1,108,NULL,NULL
+117,brique spécifique,1,108,NULL,NULL
+112,faîtage,1,108,NULL,NULL
+111,rive,1,108,NULL,NULL
+110,tuile,1,108,NULL,NULL
+114,tuile spécifique,1,108,NULL,NULL
+121,parfeuille,1,108,NULL,NULL
+120,tomette,1,108,NULL,NULL
+127,bordure jardin,1,108,NULL,NULL
+129,carreau de poêle,1,108,ne devrait pas être dans feu ?,NULL
+128,élément architectural,1,108,NULL,NULL
+126,plaque de foyer,1,108,NULL,NULL
+41,jarre,1,39,NULL,NULL
+45,bouteille,1,39,NULL,NULL
+44,pot à conserve,1,39,NULL,NULL
+50,pot à fraises,1,39,NULL,NULL
+47,pot à moutarde,1,39,NULL,NULL
+49,pot à raisin,1,39,NULL,NULL
+48,vinaigrier,1,39,NULL,NULL
+142,fontaine,2,63,NULL,NULL
+18,théière ou chocolatière,2,10,NULL,NULL
+145,forme à découpes,2,77,NULL,NULL
+143,inconnue,0,NULL,NULL,5
+85,billes,2,77,NULL,NULL
+86,jouet,2,77,NULL,NULL
+107,enfumoir,2,98,NULL,NULL
+101,abreuvoir,2,98,NULL,NULL
+88,outils réfractaires de cuisson,1,87,NULL,NULL
+144,forme à trous,2,77,NULL,NULL
+148,amphore,1,147,NULL,NULL
+102,nichoir,2,98,NULL,NULL
+141,godet de roue à eau,2,98,"godet de noria, godet de saqieh",NULL
+10,service à liquides,1,1,NULL,NULL
+149,pot à bec,2,10,NULL,NULL
+150,fusaïole ou disque à trou,2,77,NULL,NULL
+146,perle,2,77,NULL,NULL
+151,support,2,27,NULL,4
+152,mandrin,2,98,NULL,NULL
+153,cuvette de latrines,2,63,NULL,NULL
+154,bouchon,2,88,NULL,NULL
+155,mortier,2,98,NULL,NULL
+156,sifflet,2,77,rossignol,NULL
+190,cruche à filtre,2,10,NULL,NULL
+83,pot à fleur,2,187,NULL,NULL
+30,"égouttoir, passoire",2,27,NULL,NULL
+159,assiette plate,3,7,NULL,NULL
+160,assiette profonde,3,7,NULL,NULL
+161,soucoupe,3,7,NULL,NULL
+12,orjol,3,162,NULL,NULL
+13,dourque,3,162,anneau sommital,NULL
+34,pot double,3,20,NULL,NULL
+62,vase d'autel,2,57,NULL,NULL
+39,stockage et emballage,0,NULL,NULL,1
+185,vase de jardin,2,187,NULL,NULL
+158,salière,2,27,NULL,NULL
+33,boîte à épices,2,27,NULL,NULL
+27,accessoire,1,1,NULL,NULL
+36,saucière,2,2,NULL,NULL
+35,soupière,2,2,NULL,NULL
+164,findjan,3,15,NULL,NULL
+165,pégau,3,20,NULL,NULL
+20,pot,2,19,NULL,NULL
+166,pot à bec pincé,3,20,NULL,NULL
+167,pot à bec tubulaire,3,20,NULL,NULL
+168,pot à bec à plaque,3,20,NULL,NULL
+61,statuette,2,57,NULL,NULL
+170,pot de chaise percée,3,64,NULL,NULL
+171,chapeau d'alambic,3,104,NULL,NULL
+17,couvercle de service à liquide,2,10,NULL,NULL
+169,pot à ouverture polylobée,3,20,NULL,NULL
+173,pot à anse(s),3,20,NULL,NULL
+175,outils de potier,1,87,NULL,NULL
+176,pot à bord rentrant,3,20,NULL,NULL
+177,couvercle à ergot,3,28,NULL,NULL
+178,figurine,2,77,NULL,NULL
+73,réchaud,2,72,"chauffe plat, braséro",NULL
+180,scorie,1,179,NULL,NULL
+181,mouton,1,179,NULL,NULL
+182,chemisage de four,1,179,NULL,NULL
+183,sole,1,179,NULL,NULL
+184,terre rubéfiée,1,179,NULL,NULL
+147,transport,0,NULL,NULL,6
+157,soucoupe de pot à fleur,2,187,NULL,NULL
+186,vase à fleurs,2,187,NULL,NULL
+187,fleurs et jardin,1,51,NULL,5
+188,aiguière,2,63,NULL,NULL
+5,coupe,2,2,NULL,NULL
+191,biberon,2,63,NULL,NULL
+192,zellige,1,108,NULL,NULL
+8,plat de service,2,2,NULL,NULL
+193,pot à crème ou à lait,2,2,NULL,NULL
+194,soucoupe,2,2,NULL,NULL
+195,sucrier,2,2,NULL,NULL
+196,corbeille,2,2,NULL,NULL
+197,beurrier,2,2,NULL,NULL
+198,boîte de toilette,2,63,NULL,NULL

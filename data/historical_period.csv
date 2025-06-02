@@ -1,0 +1,17 @@
+"id","period_name_fr","period_begin","period_end","period_name_en"
+6,époque abbasside,750,945,NULL
+7,époque fatimide,909,1171,NULL
+8,époque ayyoubide,1171,1250,NULL
+9,époque mamelouke,1250,1517,NULL
+10,époque ottomane,330,1453,NULL
+11,époque byzantine,1501,1736,NULL
+12,époque safavide,1207,1574,NULL
+13,époque hafside,1207,1574,NULL
+14,époque almohade,1160,1230,NULL
+15,époque ilkhanide,1256,1335,NULL
+4,période pré-industrielle occidentale,NULL,NULL,Pre-industrial western period
+5,période industrielle,NULL,NULL,Industrial period
+3,époque moderne occidentale,1492,1789,Western modern period
+1,haut moyen-âge occidental,476,987,Early wetsern middle age
+2,moyen-âge occidental,987,1492,Western middle age
+16,antiquité grecque et romaine,-3500,476,Greek and roman antiquity

@@ -1,0 +1,13 @@
+"id","color_name_fr","color_hexadecimal","color_composition","color_path"
+1,Vert,"4d6a23",Cuivre,vert.jpg
+2,Brun,"4a3905",Fer,brun.jpg
+3,Violacé,"4c3d51",Manganèse,violace.jpg
+4,Bleu,"3639a8",Cobalt,bleu.jpg
+5,Jaune moutarde,e8b150,Fer,jauneMoutarde.jpg
+6,Brun-noir,"2e251c",Manganèse,brunNoir.jpg
+7,Jaune,f4ba1d,Chrome,jaune.jpg
+8,Turquoise,"8ba7b6",NULL,turquoise.jpg
+9,Orange,dc8b42,NULL,orange.jpg
+10,Rouge-brun,"65392d",Oxide ferreux,rougeOxyde.jpg
+11,Blanc,e3dfca,NULL,blanc.jpg
+12,Lustre,bda16c,NULL,lustre.jpg
