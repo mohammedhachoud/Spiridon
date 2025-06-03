@@ -12,13 +12,15 @@ from ..utils import seed_everything
 
 class RGCNClassifier(pl.LightningModule):
     def __init__(self, num_nodes, num_relations, embedding_dim, num_classes, num_bases,
-             rgcn_hidden_dim, num_rgcn_layers=3, dropout=0.2, learning_rate=1e-3, patience=20,
-             initial_node_embeddings=None, l2_reg=0, edge_index=None, edge_type=None):
+         rgcn_hidden_dim, num_rgcn_layers=3, dropout=0.2, learning_rate=1e-3, patience=20,
+         initial_node_embeddings=None, l2_reg=0, edge_index=None, edge_type=None):
 
         super().__init__()
         self.save_hyperparameters(ignore=['initial_node_embeddings', 'edge_index', 'edge_type'])
         self.num_nodes = self.hparams.num_nodes
-        self.num_relations = num_relations
+        self.num_relations = num_relations  
+        self.total_relations = num_relations * 2  # Forward + Inverse relations
+        
         self.embedding_dim = self.hparams.embedding_dim
         self.num_classes = self.hparams.num_classes
         self.rgcn_hidden_dim = self.hparams.rgcn_hidden_dim
@@ -29,7 +31,7 @@ class RGCNClassifier(pl.LightningModule):
         self.l2_reg = self.hparams.l2_reg
         self.patience = self.hparams.patience
         
-        print(f"Initializing RGCNClassifier with {self.num_nodes} nodes, {self.num_relations} relations, embedding dim {self.embedding_dim}, and {self.num_classes} classes.")
+        print(f"Initializing RGCNClassifier with {self.num_nodes} nodes, {self.num_relations} base relations ({self.total_relations} total with inverses), embedding dim {self.embedding_dim}, and {self.num_classes} classes.")
         if edge_index is not None:
             print(f"Graph stats - Nodes: {self.num_nodes}, Edges: {edge_index.shape[1]}")
             print(f"Edge types: {torch.unique(edge_type)}")
@@ -58,7 +60,7 @@ class RGCNClassifier(pl.LightningModule):
             nn.init.xavier_uniform_(self.node_emb.weight, gain=1.0)
 
         self.rgcn_layers = nn.ModuleList()
-    
+
         input_dim = self.embedding_dim
         for i in range(self.num_rgcn_layers):
             if i == self.num_rgcn_layers - 1:
@@ -67,7 +69,8 @@ class RGCNClassifier(pl.LightningModule):
                 output_dim = max(self.rgcn_hidden_dim, input_dim // 2) if input_dim > self.rgcn_hidden_dim else self.rgcn_hidden_dim
             
             print(f"RGCN Layer {i}: {input_dim} → {output_dim}")
-            self.rgcn_layers.append(RGCNConv(input_dim, output_dim, self.num_relations, num_bases=self.num_bases))
+            # Use total_relations (doubled) for RGCN layers
+            self.rgcn_layers.append(RGCNConv(input_dim, output_dim, self.total_relations, num_bases=self.num_bases))
             input_dim = output_dim
 
         self.dropout_layer = nn.Dropout(self.dropout)
@@ -81,7 +84,7 @@ class RGCNClassifier(pl.LightningModule):
             nn.Dropout(self.dropout),
             nn.Linear(final_rgcn_dim // 2, self.num_classes)
         )
-    
+
         for module in self.classification_head:
             if isinstance(module, nn.Linear):
                 nn.init.xavier_uniform_(module.weight, gain=1.0)
@@ -92,55 +95,30 @@ class RGCNClassifier(pl.LightningModule):
         # Store graph data temporarily
         self._initial_edge_index = edge_index
         self._initial_edge_type = edge_type
+        
+        # Initialize graph buffers as None
+        self.register_buffer('graph_edge_index', None)
+        self.register_buffer('graph_edge_type', None)
 
     def setup(self, stage=None):
-        if hasattr(self, 'graph_edge_index') and hasattr(self, 'graph_edge_type'):
-             if isinstance(self.graph_edge_index, torch.Tensor) and isinstance(self.graph_edge_type, torch.Tensor):
-                return
-        
-        if hasattr(self, 'graph_edge_index'):
-            return
-
-        if self._initial_edge_index is None or self._initial_edge_type is None:
-             warnings.warn("Graph data is None during setup. Cannot proceed with registration.", UserWarning)
-             return
+        """Setup method called by PyTorch Lightning with stage parameter"""
+        if self._initial_edge_index is not None and self._initial_edge_type is not None:
+            # Move graph data to device and register as buffers
+            self.graph_edge_index = self._initial_edge_index.to(self.device)
+            self.graph_edge_type = self._initial_edge_type.to(self.device)
             
-        if isinstance(self._initial_edge_index, np.ndarray):
-             self._initial_edge_index = torch.tensor(self._initial_edge_index, dtype=torch.long)
-        elif not isinstance(self._initial_edge_index, torch.Tensor):
-            raise TypeError(f"Expected _initial_edge_index to be numpy.ndarray or torch.Tensor, but got {type(self._initial_edge_index)}")
-
-        if isinstance(self._initial_edge_type, np.ndarray):
-             self._initial_edge_type = torch.tensor(self._initial_edge_type, dtype=torch.long)
-        elif not isinstance(self._initial_edge_type, torch.Tensor):
-            raise TypeError(f"Expected _initial_edge_type to be numpy.ndarray or torch.Tensor, but got {type(self._initial_edge_type)}")
-
-        # Shape validation
-        if self._initial_edge_index.ndim != 2 or self._initial_edge_index.shape[0] != 2:
-             raise ValueError(f"edge_index must have shape (2, num_edges), but got {self._initial_edge_index.shape}")
-        if self._initial_edge_type.ndim > 1 and self._initial_edge_type.shape[0] != 1:
-            self._initial_edge_type = self._initial_edge_type.squeeze()
-            if self._initial_edge_type.ndim > 1:
-                 raise ValueError(f"edge_type must be 1D after squeeze, but got {self._initial_edge_type.shape}")
-        if self._initial_edge_index.shape[1] != self._initial_edge_type.numel():
-             raise ValueError(f"Number of edges in edge_index ({self._initial_edge_index.shape[1]}) must match num elements in edge_type ({self._initial_edge_type.numel()})")
-
-        # Register as buffers
-        self.register_buffer("graph_edge_index", self._initial_edge_index, persistent=True)
-        self.register_buffer("graph_edge_type", self._initial_edge_type, persistent=True)
-
-        # Clear temporary storage
-        self._initial_edge_index = None
-        self._initial_edge_type = None
+            # Clear temporary storage
+            self._initial_edge_index = None
+            self._initial_edge_type = None
 
     def forward(self, edge_index=None, edge_type=None):
         """Computes node embeddings using RGCN layers for all nodes in the graph."""
         
         # Ensure setup has been called and buffers exist
         if not hasattr(self, 'graph_edge_index') or self.graph_edge_index is None:
-            # If setup hasn't been called yet, call it now
+            # If setup hasn't been called yet, call it now with default stage
             if hasattr(self, '_initial_edge_index') and self._initial_edge_index is not None:
-                self.setup()
+                self.setup(stage='fit')  # Provide default stage
             else:
                 raise RuntimeError("Graph structure not available. No edge_index provided during initialization.")
         
@@ -153,15 +131,19 @@ class RGCNClassifier(pl.LightningModule):
         original_edge_index = self.graph_edge_index
         original_edge_type = self.graph_edge_type
         
-        # Add reverse edges to make graph undirected
+        # Create reverse edges with inverse relation types
         reverse_edge_index = torch.stack([original_edge_index[1], original_edge_index[0]])
-        reverse_edge_type = original_edge_type  # Same relation type for undirected
+        
+        # Create inverse relations: r -> r + num_relations (r-1)
+        # relations 0 to num_relations-1 are forward relations
+        # relations num_relations to 2*num_relations-1 are their inverses
+        reverse_edge_type = original_edge_type + self.num_relations
         
         # Combine original and reverse edges
         undirected_edge_index = torch.cat([original_edge_index, reverse_edge_index], dim=1)
         undirected_edge_type = torch.cat([original_edge_type, reverse_edge_type])
         
-        # Apply RGCN layers with undirected edges
+        # Apply RGCN layers with undirected edges and inverse relations
         for i, layer in enumerate(self.rgcn_layers):
             x = layer(x, undirected_edge_index, undirected_edge_type)
             
