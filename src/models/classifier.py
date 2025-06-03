@@ -133,25 +133,44 @@ class RGCNClassifier(pl.LightningModule):
         self._initial_edge_index = None
         self._initial_edge_type = None
 
-    def forward(self):
+    def forward(self, edge_index=None, edge_type=None):
         """Computes node embeddings using RGCN layers for all nodes in the graph."""
-        if not hasattr(self, 'graph_edge_index') or self.graph_edge_index is None or \
-           not hasattr(self, 'graph_edge_type') or self.graph_edge_type is None:
-             warnings.warn("Graph structure buffers are None in forward.", RuntimeWarning)
-             raise RuntimeError("Graph structure not set up. Buffers are None or not registered.")
+        
+        # Ensure setup has been called and buffers exist
+        if not hasattr(self, 'graph_edge_index') or self.graph_edge_index is None:
+            # If setup hasn't been called yet, call it now
+            if hasattr(self, '_initial_edge_index') and self._initial_edge_index is not None:
+                self.setup()
+            else:
+                raise RuntimeError("Graph structure not available. No edge_index provided during initialization.")
+        
+        if not hasattr(self, 'graph_edge_type') or self.graph_edge_type is None:
+            raise RuntimeError("Graph structure not set up properly. graph_edge_type is None.")
 
         x = self.node_emb.weight
         
-        # Apply RGCN layers
+        # Use stored graph buffers
+        original_edge_index = self.graph_edge_index
+        original_edge_type = self.graph_edge_type
+        
+        # Add reverse edges to make graph undirected
+        reverse_edge_index = torch.stack([original_edge_index[1], original_edge_index[0]])
+        reverse_edge_type = original_edge_type  # Same relation type for undirected
+        
+        # Combine original and reverse edges
+        undirected_edge_index = torch.cat([original_edge_index, reverse_edge_index], dim=1)
+        undirected_edge_type = torch.cat([original_edge_type, reverse_edge_type])
+        
+        # Apply RGCN layers with undirected edges
         for i, layer in enumerate(self.rgcn_layers):
-            x = layer(x, self.graph_edge_index, self.graph_edge_type)
+            x = layer(x, undirected_edge_index, undirected_edge_type)
             
             if i < len(self.rgcn_layers) - 1:
                 x = F.relu(x)
                 x = self.dropout_layer(x)
 
         return x
-
+    
     def training_step(self, batch, batch_idx):
         if isinstance(batch, list) and len(batch) == 1 and isinstance(batch[0], torch.Tensor):
             batch = batch[0]

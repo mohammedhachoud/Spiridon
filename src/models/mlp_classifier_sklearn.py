@@ -1,13 +1,11 @@
-# src/models/mlp_classifier_sklearn.py
 import pandas as pd
 import numpy as np
 from sklearn.neural_network import MLPClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from collections import Counter
 
 def train_and_evaluate_mlp_model(X_train, X_test, y_train, y_test, scenario_name, root_category_names_map, mlp_params=None):
-    """Train and evaluate MLP classifier with normalization & training metrics"""
+    """Train and evaluate MLP classifier without normalization"""
     print(f"\n{'='*50}")
     print(f"SCENARIO: {scenario_name} - MLP Classifier")
     print(f"{'='*50}")
@@ -43,32 +41,27 @@ def train_and_evaluate_mlp_model(X_train, X_test, y_train, y_test, scenario_name
     print(f"\nNeural Network Architecture:")
     print(f"Input layer: {X_train.shape[1]} features")
     print(f"Hidden layers: {default_mlp_params['hidden_layer_sizes']}")
-    print(f"Output layer: {len(unique_train_labels)} neurons (softmax)") # Assuming classification
+    print(f"Output layer: {len(unique_train_labels)} neurons (softmax)") 
 
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    
     mlp = MLPClassifier(**default_mlp_params)
     
     print(f"\nTraining MLP model...")
-    mlp.fit(X_train_scaled, y_train)
+    mlp.fit(X_train, y_train)
     
-    train_accuracy = mlp.score(X_train_scaled, y_train)
-    test_accuracy = mlp.score(X_test_scaled, y_test)
+    train_accuracy = mlp.score(X_train, y_train)
+    test_accuracy = mlp.score(X_test, y_test)
     
     print(f"\n{'='*30}\nTRAINING METRICS:\n{'='*30}")
     print(f"Training accuracy: {train_accuracy:.4f}")
     print(f"Test accuracy: {test_accuracy:.4f}")
     
-    y_pred = mlp.predict(X_test_scaled)
+    y_pred = mlp.predict(X_test)
     print(f"\n{'='*30}\nDETAILED CLASSIFICATION REPORT:\n{'='*30}")
-    # Ensure target_names are correctly mapped from root_category_names_map
     target_names_report = [root_category_names_map.get(int(cls), f"Class_{cls}") for cls in mlp.classes_]
     print(classification_report(y_test, y_pred, target_names=target_names_report, zero_division=0))
     
     print(f"\n{'='*30}\nPERFORMANCE BY ROOT CATEGORY:\n{'='*30}")
-    for cat_id in sorted(np.unique(y_test)): # Use unique labels from y_test
+    for cat_id in sorted(np.unique(y_test)): 
         cat_name_display = root_category_names_map.get(int(cat_id), f"UnknownCat ({cat_id})")
         cat_indices = (y_test == cat_id)
         if np.sum(cat_indices) > 0:
@@ -86,4 +79,4 @@ def train_and_evaluate_mlp_model(X_train, X_test, y_train, y_test, scenario_name
     cm_df = pd.DataFrame(cm, index=class_names, columns=class_names)
     print(cm_df)
     
-    return mlp, scaler, test_accuracy
+    return mlp, None, test_accuracy

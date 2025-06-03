@@ -6,22 +6,20 @@ import json
 from collections import Counter
 from .. import config # Assuming config.py has OUTPUT_BASE_DIR
 
-def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1, max_functions=None, max_features=None):
+def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
     """
     Create MLP input data with different embedding types.
     
     Args:
         dfs: Dictionary of DataFrames
         study_name: str, one of ["etude1", "etude1_prime", "etude2"]
-            - "etude1": 138 ceramics per class (default)
-            - "etude1_prime": 276 ceramics per class (double the minimum class)
-            - "etude2": Remove minimum class, select 950 from each remaining class
+            - "etude1": 138 ceramics per class (default) (690 samples : Training samples: 586 Test samples: 104)
+            - "etude1_prime": 276 ceramics per class (double the minimum class) ( 1242 samples : Training samples: 1055 Test samples: 187)
+            - "etude2": Remove minimum class, select 950 from each remaining class ( 3762 samples : Training samples: 3197 ,Test samples: 565]
         embedding_type: int, one of [0, 1, 2]
-            - 0: Only ceramic attributes (origin, color, context, source, reuse, production_fail)
-            - 1: Only functions + features (default, current behavior)
-            - 2: Combined ceramic attributes + functions + features
-        max_functions: Deprecated parameter (ignored)
-        max_features: Deprecated parameter (ignored)
+            - 0: Only ceramic attributes (origin, color, context, source, reuse, production_fail) with Dim = [85]
+            - 1: Only functions + features (default, current behavior) with dim = [181 (functions)+ 105(features) = 286]
+            - 2: Combined ceramic attributes + functions + features with dim = [85 + 286 = 371]
     """
     print(f"Preparing data for MLP Classifier...")
     print(f"Study configuration: {study_name}")
@@ -230,7 +228,7 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1, max_functi
         
         return df, function_feature_info, maps
 
-    # --- 3. Find root categories (same as before) ---
+    # --- 3. Find root categories ---
     def find_root_category(cat_id, tc_df):
         visited = set()
         current_id = cat_id

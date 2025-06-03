@@ -9,11 +9,11 @@ from .graph_utils import (
     calculate_completeness_score,
     extract_triplets_for_selection
 )
-from .data_preparation.format_rgcn_link_prediction_data import (
+from .data_preparation.format_rgcn_data import (
     prepare_study_datasets_hybrid_embeddings,
     save_rgcn_study_data
 )
-from .data_preparation.format_rgcn_classification_data import (
+from .data_preparation.format_rgcn_mlp_classification_data import (
     process_and_save_classification_data
 )
 from .utils import seed_everything
