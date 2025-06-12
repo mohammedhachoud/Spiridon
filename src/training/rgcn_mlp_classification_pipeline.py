@@ -4,10 +4,13 @@ import traceback
 import pandas as pd
 import numpy as np
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
+import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
+from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.utilities.model_summary import ModelSummary
 import warnings
@@ -50,6 +53,10 @@ def load_classification_data(output_dir):
         edge_type = torch.tensor(training_triplets_df['relation_idx'].values, dtype=torch.long)
         labeled_nodes_and_labels = torch.tensor(ceramic_labels_df[['new_ceramic_node_idx', 'label_id']].values, dtype=torch.long)
 
+        # NEW: Compute node types based on connectivity patterns
+        num_nodes = stats['total_nodes_in_graph']
+        node_types = compute_node_types(edge_index, num_nodes)
+
         # Extract hyperparameters with defaults
         hyperparams = {
             'num_nodes': stats['total_nodes_in_graph'],
@@ -74,6 +81,7 @@ def load_classification_data(output_dir):
             'initial_node_embeddings': node_embeddings,
             'edge_index': edge_index,
             'edge_type': edge_type,
+            'node_types': node_types,  # NEW: Add node types
             'labeled_nodes_and_labels': labeled_nodes_and_labels,
             'label_to_category_id': dict(zip(label_mapping_df['label_id'], label_mapping_df['original_root_category_id'])),
             'label_to_category_name': dict(zip(label_mapping_df['label_id'], label_mapping_df['root_category_name'])),
@@ -86,206 +94,171 @@ def load_classification_data(output_dir):
         return None
 
 
-def _create_data_loaders(labeled_nodes_and_labels, study_name, train_size=0.7, val_size=0.15, test_size=0.15):
+def compute_node_types(edge_index, num_nodes):
     """
-    Creates train, validation, and test data loaders with balanced sampling from each class.
-    Takes the specified proportion from EACH CLASS rather than from the total dataset.
+    Compute node types based on connectivity patterns.
     
     Args:
-        labeled_nodes_and_labels: Tensor of shape (N, 2) with node indices and labels
-        study_name: Name of the study for logging purposes
-        train_size, val_size, test_size: Split ratios PER CLASS (should sum to 1.0)
+        edge_index: Edge index tensor of shape [2, num_edges]
+        num_nodes: Total number of nodes
         
     Returns:
-        tuple: (train_loader, val_loader, test_loader) or (None, None, None) if split fails
+        torch.Tensor: Node types tensor of shape [num_nodes]
+            0: nodes with only outgoing edges
+            1: nodes with only incoming edges  
+            2: nodes with both incoming and outgoing edges
+            3: isolated nodes (no edges)
     """
-    if labeled_nodes_and_labels.numel() == 0:
-        print(f"No labeled nodes found for '{study_name}'.")
-        return None, None, None
-
-    labeled_indices = labeled_nodes_and_labels[:, 0].numpy()
-    labels = labeled_nodes_and_labels[:, 1].numpy()
+    # Count incoming and outgoing edges for each node
+    out_degree = torch.bincount(edge_index[0], minlength=num_nodes)
+    in_degree = torch.bincount(edge_index[1], minlength=num_nodes)
     
-    # Verify split ratios sum to 1
-    if abs(train_size + val_size + test_size - 1.0) > 1e-6:
-        print(f"⚠️  Warning: Split ratios don't sum to 1.0 for '{study_name}' "
-              f"(train={train_size}, val={val_size}, test={test_size})")
+    # Determine node types
+    node_types = torch.zeros(num_nodes, dtype=torch.long)
+    
+    # Type 0: Only outgoing edges
+    node_types[(out_degree > 0) & (in_degree == 0)] = 0
+    
+    # Type 1: Only incoming edges
+    node_types[(out_degree == 0) & (in_degree > 0)] = 1
+    
+    # Type 2: Both incoming and outgoing edges
+    node_types[(out_degree > 0) & (in_degree > 0)] = 2
+    
+    # Type 3: Isolated nodes (no edges)
+    node_types[(out_degree == 0) & (in_degree == 0)] = 3
+    
+    # Print node type distribution
+    unique_types, counts = torch.unique(node_types, return_counts=True)
+    print(f"\nNode type distribution:")
+    type_names = ["Only outgoing", "Only incoming", "Bidirectional", "Isolated"]
+    for node_type, count in zip(unique_types, counts):
+        print(f"  Type {node_type} ({type_names[node_type]}): {count}")
+    
+    return node_types
 
-    try:
-        # Get unique classes and their counts
-        unique_classes, class_counts = np.unique(labels, return_counts=True)
-        print(f"\nClass distribution for '{study_name}':")
-        for cls, count in zip(unique_classes, class_counts):
-            print(f"  Class {cls}: {count} samples")
-        
-        # Check if any class has too few samples for the split
-        min_samples_needed = max(1, int(1 / min(train_size, val_size, test_size)))
-        insufficient_classes = class_counts < min_samples_needed
-        if np.any(insufficient_classes):
-            problematic_classes = unique_classes[insufficient_classes]
-            print(f"❌ Classes {problematic_classes} have insufficient samples for the requested split.")
-            return None, None, None
 
-        # Initialize lists for each split
-        train_indices, train_labels = [], []
-        val_indices, val_labels = [], []
-        test_indices, test_labels = [], []
-
-        # Process each class separately
-        for class_label in unique_classes:
-            # Get all samples for this class
-            class_mask = (labels == class_label)
-            class_indices = labeled_indices[class_mask]
-            class_labels = labels[class_mask]
-            
-            n_samples = len(class_indices)
-            
-            # Calculate split sizes for this class
-            n_train = max(1, int(n_samples * train_size))
-            n_val = max(1, int(n_samples * val_size))
-            n_test = n_samples - n_train - n_val  # Remaining samples go to test
-            
-            # Ensure we don't exceed available samples
-            if n_train + n_val > n_samples:
-                n_val = max(0, n_samples - n_train)
-                n_test = 0
-            
-            print(f"  Class {class_label}: {n_train} train, {n_val} val, {n_test} test")
-            
-            # Randomly shuffle indices for this class
-            np.random.seed(42)  # For reproducibility
-            shuffled_idx = np.random.permutation(len(class_indices))
-            
-            # Split the shuffled indices
-            train_idx = shuffled_idx[:n_train]
-            val_idx = shuffled_idx[n_train:n_train + n_val]
-            test_idx = shuffled_idx[n_train + n_val:]
-            
-            # Add to respective splits
-            train_indices.extend(class_indices[train_idx])
-            train_labels.extend(class_labels[train_idx])
-            
-            if len(val_idx) > 0:
-                val_indices.extend(class_indices[val_idx])
-                val_labels.extend(class_labels[val_idx])
-            
-            if len(test_idx) > 0:
-                test_indices.extend(class_indices[test_idx])
-                test_labels.extend(class_labels[test_idx])
-
-        # Convert to numpy arrays
-        train_indices, train_labels = np.array(train_indices), np.array(train_labels)
-        val_indices, val_labels = np.array(val_indices), np.array(val_labels)
-        test_indices, test_labels = np.array(test_indices), np.array(test_labels)
-
-        print(f"\n📊 Final Split Summary for '{study_name}':")
-        print(f"  Train: {len(train_indices)} nodes")
-        print(f"  Validation: {len(val_indices)} nodes")
-        print(f"  Test: {len(test_indices)} nodes")
-        
-        # Show class distribution in each split
-        for split_name, split_labels in [('Train', train_labels), ('Val', val_labels), ('Test', test_labels)]:
-            if len(split_labels) > 0:
-                unique, counts = np.unique(split_labels, return_counts=True)
-                class_dist = {cls: count for cls, count in zip(unique, counts)}
-                print(f"  {split_name} class distribution: {class_dist}")
-
-        # Create data loaders
-        loaders = []
-        for indices, labels_arr, name in [(train_indices, train_labels, 'Train'), 
-                                         (val_indices, val_labels, 'Validation'), 
-                                         (test_indices, test_labels, 'Test')]:
-            if len(indices) > 0:
-                dataset = TensorDataset(torch.tensor(np.vstack([indices, labels_arr]).T, dtype=torch.long))
-                loader = DataLoader(dataset, batch_size=len(indices), shuffle=(name == 'Train'))
-                loaders.append(loader)
-            else:
-                loaders.append(None)
-                if name != 'Test':  # Test loader being None is less critical
-                    warnings.warn(f"{name} split resulted in 0 nodes for '{study_name}'.", UserWarning)
-
-        return tuple(loaders)
-
-    except Exception as e:
-        print(f"❌ Unexpected error during balanced node split for '{study_name}': {e}")
-        traceback.print_exc()
+def _create_data_loaders(labeled_nodes_and_labels, study_name, train_ratio=0.7, val_ratio=0.15, 
+                        test_ratio=0.15, batch_size=512, random_state=42):
+    """
+    Create proper train/val/test data loaders with no data leakage
+    """
+    print(f"Creating data loaders for {study_name}")
+    
+    if labeled_nodes_and_labels is None or len(labeled_nodes_and_labels) == 0:
+        print("No labeled data available")
         return None, None, None
+    
+    # Convert to tensor if needed
+    if isinstance(labeled_nodes_and_labels, np.ndarray):
+        labeled_nodes_and_labels = torch.tensor(labeled_nodes_and_labels, dtype=torch.long)
+    
+    total_samples = labeled_nodes_and_labels.shape[0]
+    print(f"Total labeled samples: {total_samples}")
+    
+    # Check if we have enough samples for splitting
+    if total_samples < 10:
+        print("Warning: Very few samples available. Using all for training.")
+        train_dataset = TensorDataset(labeled_nodes_and_labels)
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        return train_loader, None, None
+    
+    # First split: separate test set
+    train_val_data, test_data = train_test_split(
+        labeled_nodes_and_labels, 
+        test_size=test_ratio, 
+        random_state=random_state,
+        stratify=labeled_nodes_and_labels[:, 1] if total_samples > labeled_nodes_and_labels[:, 1].unique().shape[0] else None
+    )
+    
+    # Second split: separate train and validation
+    if train_val_data.shape[0] > 5:  # Only split if we have enough samples
+        train_data, val_data = train_test_split(
+            train_val_data,
+            test_size=val_ratio / (train_ratio + val_ratio),  # Adjust ratio for remaining data
+            random_state=random_state,
+            stratify=train_val_data[:, 1] if train_val_data.shape[0] > train_val_data[:, 1].unique().shape[0] else None
+        )
+    else:
+        train_data = train_val_data
+        val_data = None
+    
+    print(f"Data split - Train: {train_data.shape[0]}, Val: {val_data.shape[0] if val_data is not None else 0}, Test: {test_data.shape[0]}")
+    
+    # Create datasets and loaders
+    train_dataset = TensorDataset(train_data)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    
+    val_loader = None
+    if val_data is not None and val_data.shape[0] > 0:
+        val_dataset = TensorDataset(val_data)
+        val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    
+    test_loader = None
+    if test_data is not None and test_data.shape[0] > 0:
+        test_dataset = TensorDataset(test_data)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    
+    return train_loader, val_loader, test_loader
+
 
 def _setup_trainer(study_name, base_data_dir, patience, trainer_params=None):
-    """
-    Sets up PyTorch Lightning trainer with callbacks and logging.
+    """Setup PyTorch Lightning trainer with proper callbacks"""
     
-    Args:
-        study_name: Name of the study
-        base_data_dir: Base directory for saving logs and checkpoints
-        patience: Early stopping patience
-        trainer_params: Optional custom trainer parameters
-        
-    Returns:
-        Trainer: Configured PyTorch Lightning trainer
-    """
-    log_save_dir = os.path.join(base_data_dir, f'{study_name}_logs')
-    os.makedirs(log_save_dir, exist_ok=True)
-
-    default_params = {
+    # Create log directory
+    log_dir = os.path.join(base_data_dir, "lightning_logs", study_name)
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Logger
+    logger = TensorBoardLogger(
+        save_dir=base_data_dir,
+        name="lightning_logs",
+        version=study_name
+    )
+    
+    # Callbacks
+    callbacks = []
+    
+    # Early stopping
+    early_stop_callback = EarlyStopping(
+        monitor='val_loss',
+        patience=patience,
+        verbose=True,
+        mode='min',
+        strict=True
+    )
+    callbacks.append(early_stop_callback)
+    
+    # Model checkpoint
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=os.path.join(log_dir, "checkpoints"),
+        filename='{epoch}-{val_loss:.4f}',
+        monitor='val_loss',
+        mode='min',
+        save_top_k=1,
+        verbose=True
+    )
+    callbacks.append(checkpoint_callback)
+    
+    # Default trainer parameters
+    default_trainer_params = {
         'max_epochs': 100,
-        'accelerator': 'auto',
-        'devices': 'auto',
+        'accelerator': 'gpu' if torch.cuda.is_available() else 'cpu',
+        'devices': 1,
+        'logger': logger,
+        'callbacks': callbacks,
         'enable_progress_bar': True,
-        'logger': CSVLogger(save_dir=log_save_dir, name=""),
+        'log_every_n_steps': 10,
+        'check_val_every_n_epoch': 1,
+        'gradient_clip_val': 1.0,  # Add gradient clipping
+        'deterministic': True,  # For reproducibility
     }
-
+    
+    # Override with user parameters
     if trainer_params:
-        print("Overriding trainer parameters:")
-        for k, v in trainer_params.items():
-            print(f"  {k}: {default_params.get(k, 'N/A')} -> {v}")
-        default_params.update(trainer_params)
-
-    # Setup callbacks if not provided
-    if 'callbacks' not in default_params or default_params['callbacks'] is None:
-        print("Using default EarlyStopping and ModelCheckpoint callbacks.")
-        
-        checkpoint_dir = os.path.join(base_data_dir, f"{study_name}_root_classification_data", 'checkpoints')
-        os.makedirs(checkpoint_dir, exist_ok=True)
-        
-        callbacks = [
-            EarlyStopping(
-                monitor='val_acc',
-                min_delta=0.0001,
-                patience=patience * 2,
-                verbose=True,
-                mode='max'
-            ),
-            ModelCheckpoint(
-                monitor='val_acc',
-                dirpath=checkpoint_dir,
-                filename='best-checkpoint',
-                save_top_k=1,
-                mode='max',
-                verbose=True
-            )
-        ]
-        default_params['callbacks'] = callbacks
-    else:
-        # Ensure ModelCheckpoint exists in custom callbacks
-        custom_callbacks = default_params['callbacks']
-        if not any(isinstance(cb, ModelCheckpoint) for cb in custom_callbacks):
-            print("Adding default ModelCheckpoint as none was provided.")
-            checkpoint_dir = os.path.join(base_data_dir, f"{study_name}_root_classification_data", 'checkpoints')
-            os.makedirs(checkpoint_dir, exist_ok=True)
-            
-            checkpoint_callback = ModelCheckpoint(
-                monitor='val_acc',
-                dirpath=checkpoint_dir,
-                filename='best-checkpoint',
-                save_top_k=1,
-                mode='max',
-                verbose=True
-            )
-            custom_callbacks.append(checkpoint_callback)
-
-    return Trainer(**default_params)
-
+        default_trainer_params.update(trainer_params)
+    
+    return pl.Trainer(**default_trainer_params)
 
 def debug_model_and_data(model, train_dataloader):
     """Quick debugging function to check model and data"""
@@ -390,6 +363,10 @@ def train_and_test_classification_model(study_name, base_data_dir="/kaggle/worki
             if k in params:
                 print(f"  {k}: {params[k]} -> {v}")
                 params[k] = v
+            else:
+                # Allow adding new parameters
+                params[k] = v
+                print(f"  Adding {k}: {v}")
 
     # Ensure num_bases is properly converted
     if params.get('num_bases') is not None:
@@ -399,9 +376,15 @@ def train_and_test_classification_model(study_name, base_data_dir="/kaggle/worki
             print(f"Warning: num_bases conversion failed, setting to None.")
             params['num_bases'] = None
 
-    # Create data loaders
+    # Create data loaders with proper splitting
     train_loader, val_loader, test_loader = _create_data_loaders(
-        classification_data['labeled_nodes_and_labels'], study_name
+        classification_data['labeled_nodes_and_labels'], 
+        study_name,
+        train_ratio=0.7,
+        val_ratio=0.15,
+        test_ratio=0.15,
+        batch_size=512,
+        random_state=42
     )
     
     if train_loader is None:
@@ -423,9 +406,11 @@ def train_and_test_classification_model(study_name, base_data_dir="/kaggle/worki
             learning_rate=params['learning_rate'],
             patience=params['patience'],
             l2_reg=params['l2_reg'],
+            node_types=classification_data.get('node_types'),
             initial_node_embeddings=classification_data['initial_node_embeddings'],
             edge_index=classification_data['edge_index'],
-            edge_type=classification_data['edge_type']
+            edge_type=classification_data['edge_type'],
+            add_inverse_relations=params.get('add_inverse_relations', True)  # Default to True
         )
         print("Model instantiated successfully.")
     except Exception as e:
@@ -440,7 +425,6 @@ def train_and_test_classification_model(study_name, base_data_dir="/kaggle/worki
     # Train model
     print("Starting model training...")
     try:
-        #debug_model_and_data(model, train_loader)
         trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
         print("Training completed.")
         
@@ -480,15 +464,20 @@ def train_and_test_classification_model(study_name, base_data_dir="/kaggle/worki
     # Plot training history
     if plot_history:
         print("Plotting training history...")
-        plot_training_history(trainer.logger.log_dir, study_name)
+        try:
+            plot_training_history(trainer.logger.log_dir, study_name)
+        except Exception as e:
+            print(f"Warning: Could not plot training history: {e}")
 
     # Return results
     results_info = {
         'study_name': study_name,
         'test_metrics': final_test_metrics,
         'log_dir': trainer.logger.log_dir,
-        'best_checkpoint_path': best_model_path
+        'best_checkpoint_path': best_model_path,
+        'model': model  # Include model for further analysis if needed
     }
 
     print(f"\n>>> Finished processing study: {study_name} <<<")
     return results_info
+

@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-from . import config
+import config
 
 def translate_dataframes(dfs):
     if 'object_colors' in dfs and not dfs['object_colors'].empty:

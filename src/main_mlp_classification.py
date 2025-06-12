@@ -7,12 +7,12 @@ from .preprocess import translate_dataframes, process_tech_cat_names
 from .feature_engineering import create_ceramic_summary
 from .data_preparation.format_mlp_classification_data import create_mlp_input_data
 from .models.mlp_classifier_sklearn import train_and_evaluate_mlp_model
-from .utils import seed_everything
+from .utils import seed_everything, plot_mlp_training_history
 import numpy as np
 import json
 from sklearn.model_selection import train_test_split
 
-def run_mlp_classification_scenarios(dfs, study_name="etude1"):
+def run_mlp_classification_scenarios(dfs, study_name, embedding_type):
     """
     Run multiple MLP classification scenarios with different configurations.
     Now using multi-label one-hot encoding instead of multi-slot encoding.
@@ -33,7 +33,7 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
     scenarios = {
         "baseline_architecture": {
             "mlp_params": {
-                'hidden_layer_sizes': (32, 16),
+                'hidden_layer_sizes': (256, 128),
                 'max_iter': 1000,
                 'early_stopping': True,
                 'validation_fraction': 0.15,
@@ -49,7 +49,7 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
     Type 1: Only functions + features (original behavior)
     Type 2: Combined ceramic attributes + functions + features
     """
-    X, y, root_category_names, function_map, feature_map = create_mlp_input_data(dfs, study_name="etude2", embedding_type=2)
+    X, y, root_category_names, function_map, feature_map = create_mlp_input_data(dfs, study_name, embedding_type)
     
     if X is None or y is None:
         print(f"ERROR: Data preparation failed for study {study_name}")
@@ -64,7 +64,7 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, 
         test_size=0.15, 
-        random_state=42, 
+        random_state=0, 
         stratify=y
     )
     
@@ -111,6 +111,20 @@ def run_mlp_classification_scenarios(dfs, study_name="etude1"):
             joblib.dump(mlp_model, os.path.join(scenario_output_dir, "trained_mlp_model.pkl"))
             joblib.dump(scaler, os.path.join(scenario_output_dir, "feature_scaler.pkl"))
             
+            print(f"Generating plots for {scenario_name}...")
+            
+            # Plot training history
+            loss_curve = getattr(mlp_model, 'loss_curve_', None)
+            validation_scores = getattr(mlp_model, 'validation_scores_', None)
+
+            plot_mlp_training_history(
+                loss_curve=loss_curve,
+                validation_scores=validation_scores,
+                test_accuracy=test_accuracy,
+                scenario_name=f"{study_name}_{scenario_name}",
+                output_dir=scenario_output_dir
+            )
+
             # Save scenario metadata
             metadata = {
                 "scenario_name": scenario_name,

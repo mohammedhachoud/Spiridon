@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import traceback
 
-def seed_everything(seed=42):
+def seed_everything(seed=0):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -172,6 +172,60 @@ def plot_training_history(log_dir, study_name):
 
     except Exception as e:
         print(f"❌ Error plotting training history for '{study_name}' from {metrics_file}: {e}")
+        traceback.print_exc()
+
+def plot_mlp_training_history(loss_curve, validation_scores, test_accuracy, scenario_name, output_dir):
+    """
+    Plot MLP training history for scikit-learn MLPClassifier.
+    
+    Args:
+        loss_curve: List of loss values during training
+        validation_scores: List of validation scores during training
+        test_accuracy: Final test accuracy
+        scenario_name: Name of the scenario for plot title
+        output_dir: Directory to save the plot
+    """
+    try:
+        plt.figure(figsize=(12, 5))
+        
+        # Plot Loss
+        plt.subplot(1, 2, 1)
+        if loss_curve is not None and len(loss_curve) > 0:
+            plt.plot(range(1, len(loss_curve) + 1), loss_curve, 'b-', label='Training Loss')
+            plt.xlabel('Iteration')
+            plt.ylabel('Loss')
+            plt.title(f'{scenario_name} - Training Loss')
+            plt.legend()
+            plt.grid(True)
+        else:
+            plt.text(0.5, 0.5, 'No loss curve available', ha='center', va='center', transform=plt.gca().transAxes)
+            plt.title(f'{scenario_name} - Training Loss (Not Available)')
+        
+        # Plot Validation Accuracy
+        plt.subplot(1, 2, 2)
+        if validation_scores is not None and len(validation_scores) > 0:
+            plt.plot(range(1, len(validation_scores) + 1), validation_scores, 'g-', label='Validation Accuracy')
+            
+        # Add test accuracy as horizontal line
+        if test_accuracy is not None:
+            plt.axhline(y=test_accuracy, color='r', linestyle='--', label=f'Test Accuracy ({test_accuracy:.4f})')
+            
+        plt.xlabel('Iteration')
+        plt.ylabel('Accuracy')
+        plt.title(f'{scenario_name} - Validation & Test Accuracy')
+        plt.legend()
+        plt.grid(True)
+        
+        plt.tight_layout()
+        
+        # Save the plot
+        plot_path = os.path.join(output_dir, f'{scenario_name}_training_history.png')
+        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+        print(f"  Saved MLP training history plot to {plot_path}")
+        plt.close()
+        
+    except Exception as e:
+        print(f"❌ Error plotting MLP training history for '{scenario_name}': {e}")
         traceback.print_exc()
 
 
