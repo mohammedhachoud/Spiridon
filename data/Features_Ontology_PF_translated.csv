@@ -1,105 +1,105 @@
-id,feature_name_fr,feature_parent,feature_grandpa,tree_depth,Nom complet,Relation,Ceramic_Relation,Nom abrégé avec la relation
-47,Firing,,0,0,Firing,,Has_Firing,
-48,Firing Atmosphere,47.0,47,1,Firing by atmosphere,is-a,Has_Firing,Firing
-49,Oxidizing,48.0,47,2,Firing in oxidizing atmosphere,is-a,Has_Firing,Cuisson selon l'atmosphère 
-50,Reducing,48.0,47,2,Firing in reducing atmosphere,is-a,Has_Firing,Cuisson selon l'atmosphère 
-51,Random,48.0,47,2,Cuisson en atmosphère non maîtrisée,is-a,Has_Firing,Cuisson selon l'atmosphère 
-52,Firing Marks,47.0,47,1,Firing with traces of stacking,is-a,Has_Firing,Firing
-53,Stilt mark,52.0,47,2,Cuisson avec traces de pernette,is-a,Has_Firing,Firing with traces of stacking
-54,Nesting,52.0,47,2,Cuisson avec traces d'emboîtement,is-a,Has_Firing,Firing with traces of stacking
-55,Other,52.0,47,2,Cuisson avec traces d'enfournement autre que pernettes et emboîtement/Cuisson avec traces d'enfournement atypique,is-a,Has_Firing,Firing with traces of stacking
-94,Decoration,,0,0,Decoration,,Has_Decoration,
-95,Geometric decoration,94.0,94,1,Geometric decoration,is-a,Has_Decoration,Decoration
-96,Figurative decoration,94.0,94,1,Figural decoration,is-a,Has_Decoration,Decoration
-97,Zoomorphic decoration,94.0,94,1,Zoomorphic decoration,is-a,Has_Decoration,Decoration
-98,Vegetal decoration,94.0,94,1,Plant/Vegetal decoration,is-a,Has_Decoration,Decoration
-99,Heraldic,94.0,94,1,Heraldic decoration,is-a,Has_Decoration,Decoration
-100,Calligraphic decoration,94.0,94,1,Calligraphic decoration,is-a,Has_Decoration,Decoration
-1,Shaping,,0,0,Forming/Shaping,,Has_Shaping,
-2,Wheel-thrown,1.0,1,1,Wheel-thrown forming,is-a,Has_Shaping,Forming
-3,Thrown,2.0,1,2,Thrown forming,is_a,Has_Shaping,Thrown forming
-4,Thrown / Modeled,2.0,1,2,Thrown and molded forming,is_a,Has_Shaping,Thrown forming
-5,Handmade,1.0,1,1,Hand forming,is_a,Has_Shaping,Forming
-6,Modeled,5.0,1,2,Modeled forming,is_a,Has_Shaping,Hand forming
-7,Modeled / Turned,5.0,1,2,Modeled and smoothed forming,is_a,Has_Shaping,Hand forming
-9,Cut,5.0,1,2,Cut forming,is_a,Has_Shaping,Hand forming
-10,Scraped,5.0,1,2,Scraped forming,is_a,Has_Shaping,Hand forming
-104,On core,5.0,1,2,Built on core forming,is_a,Has_Shaping,Hand forming
-11,Molded,1.0,1,1,Molded forming,is-a,Has_Shaping,Forming
-12,Molded,11.0,1,2,Mold-formed,is_a,Has_Shaping,Molded forming
-13,Cast,11.0,1,2,Slip cast forming,is_a,Has_Shaping,Molded forming
-78,Marks and Signs,,0,0,Marks and Signs,is-a,Has_Mark,
-79,Maker's Mark,78.0,78,1,Manufacturer’s mark,is-a,Has_Mark,Marks or Signs
-80,Impressed,79.0,78,2,Impressed mark,is-a,Has_Mark,marque 
-81,Stamped,79.0,78,2,Stamped mark,is-a,Has_Mark,marque 
-82,Incised,79.0,78,2,Incised mark,is-a,Has_Mark,marque 
-83,Painted,79.0,78,2,Painted mark,is-a,Has_Mark,marque 
-102,Molded in relief,79.0,78,2,Molded in relief mark,is-a,Has_Mark,marque 
-84,Signs,78.0,78,1,Signe de Fabrique ,is-a,Has_Sign,Marks or Signs
-86,Incised post-firing,84.0,78,2,Post-firing incised sign,is-a,Has_Sign,Signe de Fabrique 
-87,Painted,84.0,78,2,Painted sign,is-a,Has_Sign,Signe de Fabrique 
-91,Incised pre-firing,84.0,78,2,Pre-firing incised sign,is-a,Has_Sign,Signe de Fabrique 
-105,Impressed,84.0,78,2,Impressed sign,is-a,Has_Sign,Signe de Fabrique 
-109,Molded in relief,84.0,78,2,Molded in relief sign,is-a,Has_Sign,Signe de Fabrique 
-14,Paste,,0,0,Paste,is-a,Has_Paste,
-15,Matrix,14.0,14,1,Paste with matrix,is-a,Has_Paste,Paste
-16,Calcareous,15.0,14,2,Calcareous paste,is-a,Has_Paste,Matrix of Paste
-17,Non-calcareous,15.0,14,2,Non-calcareous paste,is-a,Has_Paste,Matrix of Paste
-18,Iron-rich,17.0,14,3,Iron-rich non-calcareous paste,is-a,Has_Paste,Matrix of Paste
-19,Kaolinitic,15.0,14,2,Kaolinitic paste,is-a,Has_Paste,Matrix of Paste
-20,Sandy,15.0,14,2,Sandy paste,is-a,Has_Paste,Matrix of Paste
-21,Artificial,15.0,14,2,Artificial paste,is-a,Has_Paste,Matrix of Paste
-22,Porcelain,15.0,14,2,Porcelaine,is-a,Has_Paste,Matrix of Paste
-23,Siliceous,15.0,14,2,Siliceous paste,is-a,Has_Paste,Matrix of Paste
-24,Stoneware,15.0,14,2,Stoneware,is-a,Has_Paste,Matrix of Paste
-25,Other,15.0,14,2,Indeterminate matrix paste,is-a,Has_Paste,Matrix of Paste
-26,Inclusions / Tempers,14.0,14,1,Paste with Inclusion,is-a,Has_Paste,Paste
-27,Mica,26.0,14,2,Paste with mica inclusions,is-a,Has_Paste,inclusion on Paste
-28,Quartz,26.0,14,2,Paste with quartz inclusions,is-a,Has_Paste,inclusion on Paste
-29,Calcite / Lime,26.0,14,2,Pâte à inclusions de calcite ou de chaux,is-a,Has_Paste,inclusion on Paste
-30,Schist,26.0,14,2,Paste with schist inclusions,is-a,Has_Paste,inclusion on Paste
-31,Vegetal,26.0,14,2,Paste with vegetal inclusions,is-a,Has_Paste,inclusion on Paste
-33,Chamotte,26.0,14,2,Paste with chamotte (grog) inclusions,is-a,Has_Paste,inclusion on Paste
-34,Ferrous nodules,26.0,14,2,Pâte à inclusions de nodules ferreus,is-a,Has_Paste,inclusion on Paste
-93,Varied,26.0,14,2,Pâte à inclusions variées indéfinies,is-a,Has_Paste,inclusion on Paste
-35,Coating,,0,0,Coating / Glaze,,Has_Coating,
-37,Without coating,35.0,35,1,No coating,is-a,Has_Coating,revêtement 
-40,Glaze or Enamel,35.0,35,1,Glaze or enamel,is-a,Has_Coating,revêtement 
-41,Lead glaze,40.0,35,2,Lead glaze,is-a,Has_Coating,Glaze or enamel
-42,Enamel,40.0,35,2,Enamel,is-a,Has_Coating,Glaze or enamel
-43,Alkaline glaze,40.0,35,2,Alkaline glaze,is-a,Has_Coating,Glaze or enamel
-44,Alkaline-lead glaze,40.0,35,2,Alkaline-lead glaze,is-a,Has_Coating,Glaze or enamel
-45,Salt glaze,40.0,35,2,Salt glaze,is-a,Has_Coating,Glaze or enamel
-46,Slip,35.0,35,1,Slip,is-a,Has_Coating,revêtement 
-56,Decoration Technique or Surface Aspect,,0,0,Decorative Technique or Surface Aspect,,Has_Decoration Technique or Surface Aspect,
-36,Surface Aspect,56.0,56,1,Surface aspect,is-a,Has_Surface Aspect,Decorative Technique or Surface Aspect
-38,Smoothed,36.0,56,2,Surface smoothing,is-a,Has_Surface Aspect,Aspect de surface 
-39,Surface whitening,36.0,56,2,Surface whitening,is-a,Has_Surface Aspect,Aspect de surface 
-107,Bluish crackled surface,36.0,56,2,Surface craquelée-bleutée,is-a,Has_Surface Aspect,Aspect de surface 
-108,Fluted,36.0,56,2,Fluted surface,is-a,Has_Surface Aspect,Aspect de surface 
-57,Decoration Technique,56.0,56,1,Decoration Techniques,is-a,Has_Decoration Technique,Decorative Technique or Surface Aspect
-58,Polished,57.0,56,2,Polished decoration,is-a,Has_Decoration Technique,Decorative Technique
-59,Incised,57.0,56,2,Incised decoration,is-a,Has_Decoration Technique,Decorative Technique
-60,"Painted, pigment",57.0,56,2,Pigment-painted decoration,is-a,Has_Decoration Technique,Decorative Technique
-61,"Painted, glaze/enamel",57.0,56,2,Glaze or enamel-painted decoration,is-a,Has_Decoration Technique,Decorative Technique
-62,"Painted, structured slip",57.0,56,2,"Structured decoration, painted with slip",is-a,Has_Decoration Technique,Decorative Technique
-63,"Mixed decoration, painted with slip and glaze",57.0,56,2,"Mixed decoration, painted with slip and glaze",is-a,Has_Decoration Technique,Decorative Technique
-64,Excised,57.0,56,2,Excised decoration,is-a,Has_Decoration Technique,Decorative Technique
-65,Impressed,57.0,56,2,Printed decoration,is-a,Has_Decoration Technique,Decorative Technique
-66,Roulette impressed,65.0,56,3,Roulette-stamped decoration,is-a,Has_Decoration Technique,Decorative Technique
-67,Punched or stamped,65.0,56,3,Punched or stamped decoration,is-a,Has_Decoration Technique,Decorative Technique
-68,Repoussé,57.0,56,2,Repoussé decoration,is-a,Has_Decoration Technique,Decorative Technique
-69,Molded,57.0,56,2,Molded decoration,is-a,Has_Decoration Technique,Decorative Technique
-70,Freely applied,57.0,56,2,Freely applied decoration,is-a,Has_Decoration Technique,Decorative Technique
-71,Applied mold,57.0,56,2,Molded and applied decoration,is-a,Has_Decoration Technique,Decorative Technique
-72,Cut,57.0,56,2,Cut-out decoration,is-a,Has_Decoration Technique,Decorative Technique
-73,Transfer,57.0,56,2,Transfer decoration,is-a,Has_Decoration Technique,Decorative Technique
-74,Stenciled,57.0,56,2,Stenciled decoration,is-a,Has_Decoration Technique,Decorative Technique
-75,Sponged,57.0,56,2,Sponge-applied decoration,is-a,Has_Decoration Technique,Decorative Technique
-77,Guilloché,57.0,56,2,Guilloché decoration (engine-turned),is-a,Has_Decoration Technique,Decorative Technique
-88,Finger-impressed,57.0,56,2,Finger-impressed decoration,is-a,Has_Decoration Technique,Decorative Technique
-89,Hatched,57.0,56,2,Hatched decoration,is-a,Has_Decoration Technique,Decorative Technique
-92,"Painted, metallic luster",57.0,56,2,Lustre-painted decoration,is-a,Has_Decoration Technique,Decorative Technique
-101,Festooned,57.0,56,2,Festooned decoration,is-a,Has_Decoration Technique,Decorative Technique
-103,Incised and/or comb-impressed,57.0,56,2,Incised or comb-printed decoration,is-a,Has_Decoration Technique,Decorative Technique
-106,Stamped,57.0,56,2,Stamped decoration,is-a,Has_Decoration Technique,Decorative Technique
+"id","feature_name_fr","feature_parent","feature_grandpa","tree_depth","Nom complet","Relation","Ceramic_Relation","Nom abrégé avec la relation"
+"47","Firing","","0","0","Firing","","Has_Firing",""
+"48","Firing Atmosphere","47.0","47","1","Firing by atmosphere","is-a","Has_Firing","Firing"
+"49","Oxidizing","48.0","47","2","Firing in oxidizing atmosphere","is-a","Has_Firing","Cuisson selon l'atmosphère "
+"50","Reducing","48.0","47","2","Firing in reducing atmosphere","is-a","Has_Firing","Cuisson selon l'atmosphère "
+"51","Random","48.0","47","2","Firing in uncontrolled atmosphere","is-a","Has_Firing","Cuisson selon l'atmosphère "
+"52","Firing Marks","47.0","47","1","Firing with traces of stacking","is-a","Has_Firing","Firing"
+"53","Stilt mark","52.0","47","2","Firing with tripod marks","is-a","Has_Firing","Firing with traces of stacking"
+"54","Nesting","52.0","47","2","Firing with nesting marks","is-a","Has_Firing","Firing with traces of stacking"
+"55","Other","52.0","47","2","Firing with atypical stacking marks","is-a","Has_Firing","Firing with traces of stacking"
+"94","Decoration","","0","0","Decoration","","Has_Decoration",""
+"95","Geometric decoration","94.0","94","1","Geometric decoration","is-a","Has_Decoration","Decoration"
+"96","Figurative decoration","94.0","94","1","Figural decoration","is-a","Has_Decoration","Decoration"
+"97","Zoomorphic decoration","94.0","94","1","Zoomorphic decoration","is-a","Has_Decoration","Decoration"
+"98","Vegetal decoration","94.0","94","1","Plant/Vegetal decoration","is-a","Has_Decoration","Decoration"
+"99","Heraldic","94.0","94","1","Heraldic decoration","is-a","Has_Decoration","Decoration"
+"100","Calligraphic decoration","94.0","94","1","Calligraphic decoration","is-a","Has_Decoration","Decoration"
+"1","Shaping","","0","0","Forming","","Has_Forming",""
+"2","Wheel-thrown","1.0","1","1","Wheel-thrown forming","is-a","Has_Forming","Forming"
+"3","Thrown","2.0","1","2","Thrown forming","is_a","Has_Forming","Thrown forming"
+"4","Thrown / Modeled","2.0","1","2","Thrown and molded forming","is_a","Has_Forming","Thrown forming"
+"5","Handmade","1.0","1","1","Hand forming","is_a","Has_Forming","Forming"
+"6","Modeled","5.0","1","2","Modeled forming","is_a","Has_Forming","Hand forming"
+"7","Modeled / Turned","5.0","1","2","Modeled and smoothed forming","is_a","Has_Forming","Hand forming"
+"9","Cut","5.0","1","2","Cut forming","is_a","Has_Forming","Hand forming"
+"10","Scraped","5.0","1","2","Scraped forming","is_a","Has_Forming","Hand forming"
+"104","On core","5.0","1","2","Built on core forming","is_a","Has_Forming","Hand forming"
+"11","Molded","1.0","1","1","Molded forming","is-a","Has_Forming","Forming"
+"12","Molded","11.0","1","2","Mold-formed","is_a","Has_Forming","Molded forming"
+"13","Cast","11.0","1","2","Slip cast forming","is_a","Has_Forming","Molded forming"
+"78","Marks and Signs","","0","0","Marks and Signs","is-a","Has_Mark",""
+"79","Maker's Mark","78.0","78","1","Manufacturer’s mark","is-a","Has_Mark","Marks or Signs"
+"80","Impressed","79.0","78","2","Impressed mark","is-a","Has_Mark","marque "
+"81"," └ Imrpimée au tampon","79.0","78","2","Stamped mark","is-a","Has_Mark","marque "
+"82","Incised","79.0","78","2","Incised mark","is-a","Has_Mark","marque "
+"83","Painted","79.0","78","2","Painted mark","is-a","Has_Mark","marque "
+"102","Molded in relief","79.0","78","2","Molded in relief mark","is-a","Has_Mark","marque "
+"84","Signs","78.0","78","1","Fabric’s mark","is-a","Has_Sign","Marks or Signs"
+"86","Incised post-firing","84.0","78","2","Post-firing incised sign","is-a","Has_Sign","Signe de Fabrique "
+"87","Painted","84.0","78","2","Painted sign","is-a","Has_Sign","Signe de Fabrique "
+"91","Incised pre-firing","84.0","78","2","Pre-firing incised sign","is-a","Has_Sign","Signe de Fabrique "
+"105","Impressed","84.0","78","2","Impressed sign","is-a","Has_Sign","Signe de Fabrique "
+"109","Molded in relief","84.0","78","2","Molded in relief sign","is-a","Has_Sign","Signe de Fabrique "
+"14","Fabric","","0","0","Fabric","is-a","Has_Fabric",""
+"15","Matrix","14.0","14","1","Fabric with matrix","is-a","Has_Fabric","Fabric"
+"16","Calcareous","15.0","14","2","Calcareous Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"17","Non-calcareous","15.0","14","2","Non-calcareous Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"18","Iron-rich","17.0","14","3","Iron-rich non-calcareous Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"19","Kaolinitic","15.0","14","2","Kaolinitic Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"20","Sandy","15.0","14","2","Sandy Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"21","Artificial","15.0","14","2","Artificial Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"22","Porcelain","15.0","14","2","Porcelain","is-a","Has_Fabric","Matrix of Fabric"
+"23","Siliceous","15.0","14","2","Siliceous Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"24","Stoneware","15.0","14","2","Stoneware","is-a","Has_Fabric","Matrix of Fabric"
+"25","Other","15.0","14","2","Indeterminate matrix Fabric","is-a","Has_Fabric","Matrix of Fabric"
+"26","Inclusions / Tempers","14.0","14","1","Fabric with Inclusion","is-a","Has_Fabric","Fabric"
+"27","Mica","26.0","14","2","Fabric with mica inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"28","Quartz","26.0","14","2","Fabric with quartz inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"29","Calcite / Lime","26.0","14","2","Fabric with calcite or lime inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"30","Schist","26.0","14","2","Fabric with schist inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"31","Vegetal","26.0","14","2","Fabric with vegetal inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"33","Chamotte","26.0","14","2","Fabric with chamotte inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"34","Ferrous nodules","26.0","14","2","Fabric with iron nodule inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"93","Varied","26.0","14","2","Fabric with varied and indeterminate inclusions","is-a","Has_Fabric","inclusion on Fabric"
+"35","Coating","","0","0","Coating / Glaze","","Has_Coating",""
+"37","Without coating","35.0","35","1","No coating","is-a","Has_Coating","revêtement "
+"40","Glaze or Tin","35.0","35","1","Lead Glaze or tin glaze","is-a","Has_Coating","revêtement "
+"41","Lead glaze","40.0","35","2","Lead glaze","is-a","Has_Coating","Glaze or tin"
+"42","Tin","40.0","35","2","Tin Glaze","is-a","Has_Coating","Glaze or tin"
+"43","Alkaline glaze","40.0","35","2","Alkaline glaze","is-a","Has_Coating","Glaze or tin"
+"44","Alkaline-lead glaze","40.0","35","2","Alkaline-lead glaze","is-a","Has_Coating","Glaze or tin"
+"45","Salt glaze","40.0","35","2","Salt glaze","is-a","Has_Coating","Glaze or tin"
+"46","Slip","35.0","35","1","Slip","is-a","Has_Coating","revêtement "
+"56","Decoration Technique or Surface Aspect","","0","0","Decorative Technique or Surface Aspect","","Has_Decoration_Technique_or_Surface_Aspect",""
+"36","Surface Aspect","56.0","56","1","Surface aspect","is-a","Has_Surface_Aspect","Decorative Technique or Surface Aspect"
+"38","Smoothed","36.0","56","2","Surface smoothing","is-a","Has_Surface_Aspect","Aspect de surface "
+"39","Surface whitening","36.0","56","2","Surface whitening","is-a","Has_Surface_Aspect","Aspect de surface "
+"107","Bluish crackled surface","36.0","56","2","Bluish crackled surface","is-a","Has_Surface_Aspect","Aspect de surface "
+"108","Fluted","36.0","56","2","Fluted surface","is-a","Has_Surface_Aspect","Aspect de surface "
+"57","Decoration Technique","56.0","56","1","Decoration Techniques","is-a","Has_Decoration_Technique","Decorative Technique or Surface Aspect"
+"58","Polished","57.0","56","2","Polished decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"59","Incised","57.0","56","2","Incised decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"60","Painted, pigment","57.0","56","2","Pigment-painted decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"61","Painted, glaze/Tin","57.0","56","2","Glaze or tin-painted decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"62","Painted, structured slip","57.0","56","2","Slip painted Structured decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"63","Painted, mixed slip and glaze","57.0","56","2","Mixed decoration, slip painted, glaze","is-a","Has_Decoration_Technique","Decorative Technique"
+"64","Champlevé","57.0","56","2","Champlevé","is-a","Has_Decoration_Technique","Decorative Technique"
+"65","Impressed","57.0","56","2","Printed decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"66","Roulette impressed","65.0","56","3","Roulette-stamped decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"67","Punched or stamped","65.0","56","3","Impressed or stamped decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"68","Repoussé","57.0","56","2","Repoussé decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"69","Molded","57.0","56","2","Molded decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"70","Freely applied","57.0","56","2","Freely applied decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"71","Applied molded","57.0","56","2","Molded and reported decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"72","Cut","57.0","56","2","Cut-out decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"73","Transfer","57.0","56","2","Transfer decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"74","Stenciled","57.0","56","2","Stenciled decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"75","Sponged","57.0","56","2","Sponged decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"77","Guilloché","57.0","56","2","Guilloché decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"88","Finger-impressed","57.0","56","2","Finger-impressed decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"89","Hatched","57.0","56","2","Hatched decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"92","Luster Painted","57.0","56","2","Lustre-painted decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"101","Festooned","57.0","56","2","Festooned decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"103","Incised and/or comb-impressed","57.0","56","2","Incised or comb-printed decoration","is-a","Has_Decoration_Technique","Decorative Technique"
+"106","Stamped","57.0","56","2","Stamped decoration","is-a","Has_Decoration_Technique","Decorative Technique"
