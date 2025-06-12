@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 import os
 import json
+import ast
 from collections import Counter
-from .. import config # Assuming config.py has OUTPUT_BASE_DIR
+import config 
 
 def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
     """
@@ -68,7 +69,7 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
         object_function_df = dfs['object_function'].copy()
         object_feature_df = dfs['object_feature'].copy()
 
-    # --- 1. Generate ceramic attribute embeddings (for types 0 and 2) ---
+
     def generate_ceramic_attribute_embeddings(df):
         """Generate one-hot embeddings for ceramic attributes."""
         print("  Generating ceramic attribute embeddings...")
@@ -80,13 +81,22 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
         # Get unique values for each attribute
         origin_values = sorted(df['origin'].dropna().unique())
         
-        # Handle color list
+        # Handle color list - FIXED VERSION
         all_colors = set()
-        for sublist in df['color_name_list'].dropna():
-            if isinstance(sublist, list):
-                for color in sublist:
+        for color_list in df['color_name_list'].dropna():
+            if isinstance(color_list, str):
+                # If it's a string representation of a list, parse it
+                try:
+                    color_list = ast.literal_eval(color_list)
+                except (ValueError, SyntaxError):
+                    # If parsing fails, skip this entry
+                    continue
+            
+            if isinstance(color_list, list):
+                for color in color_list:
                     if pd.notna(color):
                         all_colors.add(str(color).strip())
+        
         color_values = sorted(list(all_colors))
 
         context_values = sorted(df['context_type_name'].dropna().unique())
@@ -109,13 +119,25 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
                 origin_vector[origin_map[row['origin']]] = 1
             embedding.extend(origin_vector)
             
-            # Colors (multi-label)
+            # Colors (multi-label) - FIXED VERSION
             color_vector = [0] * len(color_map)
-            if isinstance(row['color_name_list'], list):
-                for c_val in row['color_name_list']:
-                    c_str = str(c_val).strip()
-                    if c_str in color_map:
-                        color_vector[color_map[c_str]] = 1
+            color_list = row['color_name_list']
+            
+            if pd.notna(color_list):
+                if isinstance(color_list, str):
+                    # If it's a string representation of a list, parse it
+                    try:
+                        color_list = ast.literal_eval(color_list)
+                    except (ValueError, SyntaxError):
+                        color_list = []
+                
+                if isinstance(color_list, list):
+                    for c_val in color_list:
+                        if pd.notna(c_val):
+                            c_str = str(c_val).strip()
+                            if c_str in color_map:
+                                color_vector[color_map[c_str]] = 1
+            
             embedding.extend(color_vector)
             
             # Context
@@ -172,35 +194,81 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
         return df, ceramic_embedding_info, attribute_maps
 
     # --- 2. Generate function/feature embeddings (for types 1 and 2) ---
+    
+    import re
+    import ast
+    import numpy as np
+
+    def parse_numpy_array_string(value):
+        """Parse string representations of numpy arrays like '[np.int64(3), np.int64(16)]'"""
+        if pd.isna(value) or not isinstance(value, str):
+            return []
+        
+        value = value.strip()
+        if not (value.startswith('[') and value.endswith(']')):
+            return []
+        
+        try:
+            # Method 1: Use regex to extract numbers from np.int64() format
+            numbers = re.findall(r'np\.int64\((\d+)\)', value)
+            if numbers:
+                return [int(num) for num in numbers]
+            
+            # Method 2: Try to extract just numbers if it's a simple list
+            numbers = re.findall(r'\b(\d+)\b', value)
+            if numbers:
+                return [int(num) for num in numbers]
+            
+            # Method 3: Try ast.literal_eval after cleaning
+            cleaned = value.replace('np.int64(', '').replace(')', '')
+            return ast.literal_eval(cleaned)
+            
+        except Exception as e:
+            print(f"    Warning: Could not parse '{value}': {e}")
+            return []
+
     def generate_function_feature_embeddings(df):
         """Generate multi-label one-hot embeddings for functions and features."""
         print("  Generating function/feature embeddings...")
+        
+        # DEBUG: Check what we're working with
+        print(f"    DataFrame shape: {df.shape}")
+        if 'function_id' in df.columns:
+            sample_func = df['function_id'].dropna().iloc[0] if not df['function_id'].dropna().empty else None
+            print(f"    Sample function_id: {repr(sample_func)}")
+        if 'feature_id' in df.columns:
+            sample_feat = df['feature_id'].dropna().iloc[0] if not df['feature_id'].dropna().empty else None
+            print(f"    Sample feature_id: {repr(sample_feat)}")
         
         # Create mapping for functions and features
         function_values = sorted(object_function_df['id'].dropna().unique().astype(int))
         function_map = {v: i for i, v in enumerate(function_values)}
         num_distinct_functions = len(function_map)
         print(f"    Function embedding length: {num_distinct_functions}")
+        print(f"    Available function IDs: {function_values[:20]}...")  # Show first 20
 
         feature_values = sorted(object_feature_df['id'].dropna().unique().astype(int))
         feature_map = {v: i for i, v in enumerate(feature_values)}
         num_distinct_features = len(feature_map)
         print(f"    Feature embedding length: {num_distinct_features}")
+        print(f"    Available feature IDs: {feature_values[:20]}...")  # Show first 20
 
         def get_function_feature_embedding(row):
             # Function multi-label one-hot vector
             function_vector = [0] * num_distinct_functions
-            if isinstance(row['function_id'], list):
-                func_ids_in_row = [int(f) for f in row['function_id'] if pd.notna(f) and int(f) in function_map]
-                for func_id in func_ids_in_row:
+            
+            if 'function_id' in row.index and pd.notna(row['function_id']):
+                func_ids = parse_numpy_array_string(row['function_id'])
+                for func_id in func_ids:
                     if func_id in function_map:
                         function_vector[function_map[func_id]] = 1
 
             # Feature multi-label one-hot vector
             feature_vector = [0] * num_distinct_features
-            if isinstance(row['feature_id'], list):
-                feat_ids_in_row = [int(f) for f in row['feature_id'] if pd.notna(f) and int(f) in feature_map]
-                for feat_id in feat_ids_in_row:
+            
+            if 'feature_id' in row.index and pd.notna(row['feature_id']):
+                feat_ids = parse_numpy_array_string(row['feature_id'])
+                for feat_id in feat_ids:
                     if feat_id in feature_map:
                         feature_vector[feature_map[feat_id]] = 1
                 
@@ -208,6 +276,26 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
             embedding = function_vector + feature_vector
             return embedding
 
+        # Test on a few rows first
+        print("    Testing on first 3 rows...")
+        test_rows = df.head(3)
+        for idx, row in test_rows.iterrows():
+            # Test function parsing
+            if 'function_id' in row.index and pd.notna(row['function_id']):
+                func_ids = parse_numpy_array_string(row['function_id'])
+                print(f"      Row {idx} function_id parsed: {func_ids}")
+            
+            # Test feature parsing
+            if 'feature_id' in row.index and pd.notna(row['feature_id']):
+                feat_ids = parse_numpy_array_string(row['feature_id'])
+                print(f"      Row {idx} feature_id parsed: {feat_ids}")
+            
+            # Test embedding
+            embedding = get_function_feature_embedding(row)
+            print(f"      Row {idx} embedding sum: {sum(embedding)}")
+
+        # Apply to all rows
+        print("    Applying to all rows...")
         df['function_feature_embedding'] = df.apply(get_function_feature_embedding, axis=1)
         
         function_feature_info = {
@@ -225,6 +313,15 @@ def create_mlp_input_data(dfs, study_name="etude1", embedding_type=1):
             actual_length = len(df['function_feature_embedding'].iloc[0])
             print(f"    Function/feature embedding generated. Length: {actual_length}")
             print(f"    Breakdown: functions({num_distinct_functions}) + features({num_distinct_features})")
+            
+            # Check success
+            non_zero_embeddings = sum(1 for emb in df['function_feature_embedding'] if sum(emb) > 0)
+            print(f"    Embeddings with non-zero values: {non_zero_embeddings}/{len(df)}")
+            
+            if non_zero_embeddings == 0:
+                print("    WARNING: All embeddings are still zero! Check ID matching.")
+            else:
+                print(f"    SUCCESS: {non_zero_embeddings} rows have valid embeddings!")
         
         return df, function_feature_info, maps
 

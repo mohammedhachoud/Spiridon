@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from . import config
+import config
 
 def create_ceramic_summary(dfs):
     """
@@ -27,7 +27,7 @@ def create_ceramic_summary(dfs):
     object_function_attrib_df = dfs['object_function_attrib'].copy()
     object_function_df = dfs['object_function'].copy()
     object_feature_attrib_df = dfs['object_feature_attrib'].copy()
-    feature_name_df = dfs['object_feature_combined_names'] if 'object_feature_combined_names' in dfs else dfs['object_feature']
+    feature_name_df = dfs['Features_Ontology'] if 'Features_Ontology' in dfs else dfs['object_feature']
 
     object_colors_attrib_df = dfs['object_colors_attrib'].copy()
     object_colors_df = dfs['object_colors'].copy()
@@ -259,6 +259,9 @@ def create_ceramic_summary(dfs):
     return ceramic_summary
 
 
+import ast
+import pandas as pd
+
 def generate_one_hot_embeddings(ceramic_summary_df):
     """Generates one-hot embeddings and adds them as a column."""
     print("Generating one-hot embeddings...")
@@ -267,12 +270,23 @@ def generate_one_hot_embeddings(ceramic_summary_df):
         return ceramic_summary_df
 
     origin_values = sorted(ceramic_summary_df['origin'].dropna().unique())
+    
+    # Fixed color processing
     all_colors = set()
-    for sublist in ceramic_summary_df['color_name_list'].dropna():
-        if isinstance(sublist, list):
-            for color in sublist:
+    for color_list in ceramic_summary_df['color_name_list'].dropna():
+        if isinstance(color_list, str):
+            # If it's a string representation of a list, parse it
+            try:
+                color_list = ast.literal_eval(color_list)
+            except (ValueError, SyntaxError):
+                # If parsing fails, skip this entry
+                continue
+        
+        if isinstance(color_list, list):
+            for color in color_list:
                 if pd.notna(color):
                     all_colors.add(str(color).strip())
+    
     color_values = sorted(list(all_colors))
 
     context_values = sorted(ceramic_summary_df['context_type_name'].dropna().unique())
@@ -287,38 +301,64 @@ def generate_one_hot_embeddings(ceramic_summary_df):
 
     def get_embedding(row):
         embedding = []
+        
         # Origin
         origin_vector = [0] * len(origin_map)
         if pd.notna(row['origin']) and row['origin'] in origin_map:
             origin_vector[origin_map[row['origin']]] = 1
         embedding.extend(origin_vector)
-        # Colors
+        
+        # Colors - Fixed processing with proper null checking
         color_vector = [0] * len(color_map)
-        if isinstance(row['color_name_list'], list): # Use 'color_name_list'
-            for c_val in row['color_name_list']:
-                c_str = str(c_val).strip()
-                if c_str in color_map:
-                    color_vector[color_map[c_str]] = 1
+        color_list = row['color_name_list']
+        
+        # Fix: Check if color_list is not None and not NaN before processing
+        if color_list is not None and not (isinstance(color_list, float) and pd.isna(color_list)):
+            if isinstance(color_list, str):
+                # If it's a string representation of a list, parse it
+                try:
+                    color_list = ast.literal_eval(color_list)
+                except (ValueError, SyntaxError):
+                    color_list = []
+            
+            if isinstance(color_list, list):
+                for c_val in color_list:
+                    if pd.notna(c_val):
+                        c_str = str(c_val).strip()
+                        if c_str in color_map:
+                            color_vector[color_map[c_str]] = 1
+        
         embedding.extend(color_vector)
+        
         # Context
         context_vector = [0] * len(context_map)
         if pd.notna(row['context_type_name']) and row['context_type_name'] in context_map:
             context_vector[context_map[row['context_type_name']]] = 1
         embedding.extend(context_vector)
+        
         # Source
         source_vector = [0] * len(source_map)
         if pd.notna(row['identifier_origin_source_name']) and row['identifier_origin_source_name'] in source_map:
             source_vector[source_map[row['identifier_origin_source_name']]] = 1
         embedding.extend(source_vector)
+        
         # Reuse
-        if pd.isna(row['reuse']): embedding.extend([0, 0])
-        else: embedding.extend([0, 1] if row['reuse'] else [1, 0])
+        if pd.isna(row['reuse']): 
+            embedding.extend([0, 0])
+        else: 
+            embedding.extend([0, 1] if row['reuse'] else [1, 0])
+        
         # Production Fail
-        if pd.isna(row['production_fail']): embedding.extend([0, 0])
-        else: embedding.extend([0, 1] if row['production_fail'] else [1, 0])
+        if pd.isna(row['production_fail']): 
+            embedding.extend([0, 0])
+        else: 
+            embedding.extend([0, 1] if row['production_fail'] else [1, 0])
+        
         return embedding
 
     ceramic_summary_df['Embedding'] = ceramic_summary_df.apply(get_embedding, axis=1)
+    
     if not ceramic_summary_df.empty and 'Embedding' in ceramic_summary_df.columns:
-         print(f"  'Embedding' column added. Example length: {len(ceramic_summary_df['Embedding'].iloc[0])}")
+        print(f"  'Embedding' column added. Example length: {len(ceramic_summary_df['Embedding'].iloc[0])}")
+    
     return ceramic_summary_df

@@ -42,6 +42,16 @@ CLF_DROPOUT = 0.2
 CLF_PATIENCE_EARLY_STOPPING = 5
 CLF_NEG_SAMPLES_TRAINING = 4
 
+OHE_CLF_RGCN_HIDDEN_DIM = 64
+OHE_CLF_LEARNING_RATE = 1e-4
+OHE_CLF_PATIENCE_EARLY_STOPPING = 5
+OHE_CLF_DROPOUT = 0.2
+OHE_CLF_L2_REG = 0
+OHE_CLF_NUM_BASES = None
+OHE_CLF_NUM_RGCN_LAYERS = 2
+OHE_CLF_NUM_EPOCHS = 100 
+DEBUG_OHE_MODEL = False
+
 COLOR_FR_TO_EN = {
     'Vert': 'Green', 'Brun': 'Brown', 'Violacé': 'Violet',
     'Bleu': 'Blue', 'Jaune moutarde': 'Mustard yellow', 'Brun-noir': 'Brown-black',

@@ -9,13 +9,12 @@ from sklearn.decomposition import PCA
 import gc
 from collections import Counter, defaultdict
 
-from .. import config
-from ..graph_utils import (
+from graph_utils import (
     build_category_hierarchy_and_map_ceramics,
     calculate_completeness_score,
     extract_triplets_for_selection
 )
-from ..utils import get_feature_parent_relation_label
+from utils import get_feature_parent_relation_label
 
 def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
                                             bert_model_name="paraphrase-multilingual-mpnet-base-v2"):
@@ -175,6 +174,8 @@ def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
     idx_counter = 0
     rel_idx_counter = 0
 
+    # Replace this section in your code (around line 140-160):
+
     print("    Identifying all unique nodes in the sampled data (Ceramics, Functions, Features, and ONLY ROOT Categories)...")
     nodes_in_sample = set()
     for entry in triplets_for_study:
@@ -200,26 +201,36 @@ def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
                 except ValueError:
                     pass
         
+        # FIX: Add ALL function nodes (main function + all its parents)
         for fid, parents_original_ids in entry.get("functions", []):
+            # Add the main function
             add_node_str_id_to_sample_set("Func_", fid)
+            # Add ALL parent functions
+            for parent_fid in parents_original_ids:
+                add_node_str_id_to_sample_set("Func_", parent_fid)
 
+        # FIX: Add ALL feature nodes (main feature + all its parents)
         for feat_id_original, parents_original_str_ids in entry.get("features", []):
+            # Add the main feature
             add_node_str_id_to_sample_set("Feat_", str(feat_id_original))
+            # Add ALL parent features
+            for parent_feat_id in parents_original_str_ids:
+                add_node_str_id_to_sample_set("Feat_", str(parent_feat_id))
 
-    all_root_ids_from_attribute_tables = set()
-    for _, row in tech_cat_func_attrib.iterrows():
-        cat_id_original = int(row['tech_cat_id'])
-        root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
-        if root_id_original is not None:
-            all_root_ids_from_attribute_tables.add(root_id_original)
-    for _, row in tech_cat_feat_attrib.iterrows():
-        cat_id_original = int(row['tech_cat_id'])
-        root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
-        if root_id_original is not None:
-            all_root_ids_from_attribute_tables.add(root_id_original)
-    
-    for root_id_orig in all_root_ids_from_attribute_tables:
-        nodes_in_sample.add(f"Cat_{root_id_orig}_Root_{root_id_orig}")
+        all_root_ids_from_attribute_tables = set()
+        for _, row in tech_cat_func_attrib.iterrows():
+            cat_id_original = int(row['tech_cat_id'])
+            root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
+            if root_id_original is not None:
+                all_root_ids_from_attribute_tables.add(root_id_original)
+        for _, row in tech_cat_feat_attrib.iterrows():
+            cat_id_original = int(row['tech_cat_id'])
+            root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
+            if root_id_original is not None:
+                all_root_ids_from_attribute_tables.add(root_id_original)
+        
+        for root_id_orig in all_root_ids_from_attribute_tables:
+            nodes_in_sample.add(f"Cat_{root_id_orig}_Root_{root_id_orig}")
 
     print(f"    Found {len(nodes_in_sample)} unique node identifiers in the sample (ceramics, functions, features, and ROOT categories).")
     if not nodes_in_sample:
@@ -418,7 +429,7 @@ def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
                         authoritative_root_graph_idx = node_to_idx.get(authoritative_root_node_identifier)
                         if authoritative_root_graph_idx is not None:
                             evaluation_triplets_final.append((ceramic_idx, BELONGS_TO_REL, authoritative_root_graph_idx))
-                            training_triplets_final.append((ceramic_idx, BELONGS_TO_REL, authoritative_root_graph_idx)) # Also add to training
+                            # training_triplets_final.append((ceramic_idx, BELONGS_TO_REL, authoritative_root_graph_idx)) # Also add to training
                         else: print(f"    ⚠️ Root category node '{authoritative_root_node_identifier}' for ceramic {cid_val} not in node_to_idx.")
                 except ValueError:
                     pass
@@ -470,57 +481,59 @@ def format_rgcn_data_with_hybrid_embeddings(dfs, triplets_for_study, study_name,
                 current_child_feat_graph_idx = parent_feat_graph_idx # Traverse up
                 child_feat_data_for_relation_lookup = feature_id_to_data.get(p_id_original_str_feat, {}) # Get next child's data
 
+    # Only add direct functions and features for root categories themselves
+# Do NOT propagate child category attributes to root
+
     added_rootcat_func_triplets = 0
     for _, row in tech_cat_func_attrib.iterrows():
         try:
             cat_id_original = int(row['tech_cat_id'])
             func_id_original = int(row['function_id'])
             
-            authoritative_root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
-            if authoritative_root_id_original is None: continue # Skip if no root found for this cat
-            
-            # Node identifier for the authoritative root category
-            cat_node_identifier_root = f"Cat_{authoritative_root_id_original}_Root_{authoritative_root_id_original}"
-            func_node_identifier = f"Func_{func_id_original}"
-
-            cat_graph_idx_root = node_to_idx.get(cat_node_identifier_root)
-            func_graph_idx = node_to_idx.get(func_node_identifier)
-
-            if cat_graph_idx_root is not None and func_graph_idx is not None:
-                training_triplets_final.append((cat_graph_idx_root, HAS_FUNCTION_REL, func_graph_idx))
-                added_rootcat_func_triplets += 1
-        except Exception as e_attr_func: # Catch any error during row processing
+            # Only process if this category IS a root category (not mapping children to root)
+            if cat_id_original in cat_to_root_map_original_ids and cat_to_root_map_original_ids[cat_id_original] == cat_id_original:
+                # This is a root category, add its direct functions
+                cat_node_identifier_root = f"Cat_{cat_id_original}_Root_{cat_id_original}"
+                func_node_identifier = f"Func_{func_id_original}"
+                cat_graph_idx_root = node_to_idx.get(cat_node_identifier_root)
+                func_graph_idx = node_to_idx.get(func_node_identifier)
+                
+                if cat_graph_idx_root is not None and func_graph_idx is not None:
+                    training_triplets_final.append((cat_graph_idx_root, HAS_FUNCTION_REL, func_graph_idx))
+                    added_rootcat_func_triplets += 1
+                    
+        except Exception as e_attr_func:
             # print(f"    ⚠️ Warn: Error in tech_cat_func_attrib processing for row {row.to_dict()}: {e_attr_func}")
             continue
-    
+
     added_rootcat_feat_triplets = 0
     for _, row in tech_cat_feat_attrib.iterrows():
         try:
             cat_id_original = int(row['tech_cat_id'])
-            feat_id_original_str = str(row['feature_id']) # Feature IDs are strings
+            feat_id_original_str = str(row['feature_id'])
             
-            authoritative_root_id_original = cat_to_root_map_original_ids.get(cat_id_original)
-            if authoritative_root_id_original is None: continue
-            
-            cat_node_identifier_root = f"Cat_{authoritative_root_id_original}_Root_{authoritative_root_id_original}"
-            feat_node_identifier = f"Feat_{feat_id_original_str}"
-
-            cat_graph_idx_root = node_to_idx.get(cat_node_identifier_root)
-            feat_graph_idx = node_to_idx.get(feat_node_identifier)
-
-            if cat_graph_idx_root is not None and feat_graph_idx is not None:
-                feat_data_from_ontology = feature_id_to_data.get(feat_id_original_str, {})
-                relation_name_cat_to_feat_raw = feat_data_from_ontology.get('Ceramic_Relation') # Re-using this field
-                if pd.notna(relation_name_cat_to_feat_raw) and str(relation_name_cat_to_feat_raw).strip():
-                    rel_idx_cat_to_feat = get_or_assign_relation_idx(relation_name_cat_to_feat_raw) \
-                                      
-                training_triplets_final.append((cat_graph_idx_root, rel_idx_cat_to_feat, feat_graph_idx))
-                added_rootcat_feat_triplets += 1
+            # Only process if this category IS a root category (not mapping children to root)
+            if cat_id_original in cat_to_root_map_original_ids and cat_to_root_map_original_ids[cat_id_original] == cat_id_original:
+                # This is a root category, add its direct features
+                cat_node_identifier_root = f"Cat_{cat_id_original}_Root_{cat_id_original}"
+                feat_node_identifier = f"Feat_{feat_id_original_str}"
+                cat_graph_idx_root = node_to_idx.get(cat_node_identifier_root)
+                feat_graph_idx = node_to_idx.get(feat_node_identifier)
+                
+                if cat_graph_idx_root is not None and feat_graph_idx is not None:
+                    feat_data_from_ontology = feature_id_to_data.get(feat_id_original_str, {})
+                    relation_name_cat_to_feat_raw = feat_data_from_ontology.get('Ceramic_Relation')
+                    
+                    if pd.notna(relation_name_cat_to_feat_raw) and str(relation_name_cat_to_feat_raw).strip():
+                        rel_idx_cat_to_feat = get_or_assign_relation_idx(relation_name_cat_to_feat_raw)
+                        training_triplets_final.append((cat_graph_idx_root, rel_idx_cat_to_feat, feat_graph_idx))
+                        added_rootcat_feat_triplets += 1
+                        
         except Exception as e_attr_feat:
             # print(f"    ⚠️ Warn: Error in tech_cat_feat_attrib processing for row {row.to_dict()}: {e_attr_feat}")
             continue
-    
-    print(f"    Added {added_rootcat_func_triplets} RootCat->Function and {added_rootcat_feat_triplets} RootCat->Feature triplets.")
+
+    print(f"    Added {added_rootcat_func_triplets} RootCat->Function and {added_rootcat_feat_triplets} RootCat->Feature triplets (direct connections only).")
 
     idx_to_relation = {v: k for k, v in relation_to_idx.items()} # Inverse map for relation index to name
 

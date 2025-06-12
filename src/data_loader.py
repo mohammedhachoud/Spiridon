@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from . import config
+import config
 
 def load_all_dataframes(data_base_path):
     """Loads all specified CSV files into a dictionary of DataFrames."""
